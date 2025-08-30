@@ -165,10 +165,11 @@
                         </tr>
                     </thead>
                     <tbody id="studentList" class="divide-y divide-gray-200 dark:divide-gray-700">
-                           <tr id="empty-state" class="hidden"><td colspan="4" class="text-center p-8 text-gray-500"><p>Nenhum aluno cadastrado. Adicione um aluno para começar.</p></td></tr>
-                           <tr id="empty-search-state" class="hidden"><td colspan="4" class="text-center p-8 text-gray-500"><p>Nenhum resultado encontrado para a sua pesquisa.</p></td></tr>
+                           <!-- O conteúdo será renderizado pelo JavaScript -->
                     </tbody>
                 </table>
+                <div id="empty-state" class="hidden text-center p-8 text-gray-500"><p>Nenhum aluno cadastrado. Adicione um aluno para começar.</p></div>
+                <div id="empty-search-state" class="hidden text-center p-8 text-gray-500"><p>Nenhum resultado encontrado para a sua pesquisa.</p></div>
             </div>
         </section>
     </main>
@@ -179,7 +180,7 @@
             <h3 class="text-lg font-bold mb-4" id="modalTitle"></h3>
             <p class="text-gray-600 dark:text-gray-300 mb-6" id="modalMessage"></p>
             <div class="flex justify-end gap-4">
-                <button id="cancelButton" class="bg-gray-200 dark:bg-gray-600 py-2 px-4 rounded-md">Cancelar</button>
+                <button class="modal-close-btn bg-gray-200 dark:bg-gray-600 py-2 px-4 rounded-md">Cancelar</button>
                 <button id="confirmButton" class="bg-red-600 text-white py-2 px-4 rounded-md">Confirmar</button>
             </div>
         </div>
@@ -236,6 +237,17 @@
             </div>
         </div>
     </div>
+    <div id="forcePasswordChangeModal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-[60]">
+        <div class="modal-content bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 w-full max-w-md">
+            <h3 class="text-lg font-bold mb-2">Segurança Inicial</h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">Por segurança, por favor defina uma nova senha para a sua lista. A senha padrão "1234" foi usada.</p>
+            <input type="password" id="forceNewPassword" placeholder="Nova senha (mínimo 4 caracteres)" class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600">
+            <p id="force-password-error" class="text-red-500 text-sm h-5 mt-1"></p>
+            <div class="flex justify-end gap-4 mt-4">
+                 <button id="saveForcedPasswordBtn" class="bg-blue-500 text-white py-2 px-4 rounded-md w-full">Definir Nova Senha e Entrar</button>
+            </div>
+        </div>
+    </div>
     <div id="reportsModal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[60]">
          <div class="modal-content bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 w-full max-w-4xl">
             <h3 class="text-lg font-bold mb-4">Relatório de Assiduidade da Turma</h3>
@@ -253,15 +265,25 @@
         const $ = (selector) => document.querySelector(selector);
         const $$ = (selector) => document.querySelectorAll(selector);
 
+        // --- CONSTANTES ---
+        const APP_STORAGE_KEY = 'attendanceAppMultiClass_v2';
+        const LOGGED_IN_KEY = 'isLoggedIn_v2';
+        const DEFAULT_PASSWORD = '1234';
+        const STATUS_PRESENT = 'P';
+        const STATUS_ABSENT = 'F';
+        const STATUS_JUSTIFIED = 'J';
+        
+        // --- ESTADO DA APLICAÇÃO ---
         let data = {};
         let activeClassId = null;
         let sortState = { key: 'name', asc: true };
         let debounceTimeout;
 
         const defaultData = {
-            password: '1234',
+            password: DEFAULT_PASSWORD,
             classes: [],
             activeClassId: null,
+            firstLogin: true,
         };
 
         const init = () => {
@@ -287,7 +309,7 @@
 
         const loadData = () => {
             try {
-                const storedData = localStorage.getItem('attendanceAppMultiClass');
+                const storedData = localStorage.getItem(APP_STORAGE_KEY);
                 data = storedData ? JSON.parse(storedData) : JSON.parse(JSON.stringify(defaultData));
                 if (!data.classes) data.classes = [];
             } catch (e) {
@@ -301,10 +323,10 @@
             const saveAction = () => {
                 try {
                     data.activeClassId = activeClassId;
-                    localStorage.setItem('attendanceAppMultiClass', JSON.stringify(data));
+                    localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(data));
                     showToast("Alterações guardadas");
                 } catch (e) {
-                    showToast("Erro ao guardar dados.");
+                    showToast("Erro ao guardar dados.", 'error');
                     console.error("Erro ao guardar dados:", e);
                 }
             };
@@ -316,7 +338,7 @@
         };
 
         const checkLogin = () => {
-            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+            if (sessionStorage.getItem(LOGGED_IN_KEY) === 'true') {
                 $('#login-screen').classList.add('hidden');
                 $('main').classList.remove('hidden');
                 initApp();
@@ -349,10 +371,10 @@
 
         const renderEmptyState = () => {
             $('#class-details').innerHTML = "Nenhuma turma encontrada. Crie uma em 'Gerir Turmas'.";
-            $('#studentList').innerHTML = `<tr><td colspan="4" class="text-center p-8 text-gray-500">Por favor, selecione ou crie uma turma.</td></tr>`;
+            $('#studentList').innerHTML = '';
+            $('#empty-state').classList.remove('hidden');
+            $('#empty-state').innerHTML = `<p>Por favor, selecione ou crie uma turma.</p>`;
             $('#attendance-summary').innerHTML = '';
-             $('#empty-state').classList.add('hidden');
-             $('#empty-search-state').classList.add('hidden');
         };
 
         const renderClassDetails = () => {
@@ -364,47 +386,65 @@
                 <span>Turno: <span contenteditable="true" data-detail="shift" class="p-1 rounded-md">${cls.details.shift}</span></span>
                 <span>Bimestre: <span contenteditable="true" data-detail="bimester" class="p-1 rounded-md">${cls.details.bimester}</span></span>`;
         };
-
+        
+        // --- LÓGICA DE RENDERIZAÇÃO MELHORADA (PERFORMANCE) ---
         const renderStudentList = () => {
             const cls = getActiveClass();
             if (!cls) {
                 renderEmptyState();
                 return;
-            };
+            }
             
             const date = $('#attendanceDate').value;
             const dailyRecord = cls.history[date] || {};
-            
+            const searchTerm = $('#searchStudent').value.toLowerCase();
+
+            // 1. Ordena os alunos
             const sortedStudents = [...cls.students].sort((a, b) => {
-                let valA = (sortState.key === 'name') ? a.name.toLowerCase() : (dailyRecord[a.id] || 'z'); // 'z' to sort empty last
+                let valA = (sortState.key === 'name') ? a.name.toLowerCase() : (dailyRecord[a.id] || 'z');
                 let valB = (sortState.key === 'name') ? b.name.toLowerCase() : (dailyRecord[b.id] || 'z');
                 if (valA < valB) return sortState.asc ? -1 : 1;
                 if (valA > valB) return sortState.asc ? 1 : -1;
                 return a.name.localeCompare(b.name);
             });
 
-            $('#studentList').innerHTML = sortedStudents.map((student, index) => {
-                const status = dailyRecord[student.id] || '';
-                return `
-                    <tr data-id="${student.id}">
-                        <td class="p-4 text-sm text-gray-500">${index + 1}</td>
-                        <td class="p-4 font-medium"><span contenteditable="true" class="edit-name p-1 rounded-md">${student.name}</span></td>
-                        <td class="p-4 text-center"><span class="status-indicator font-semibold px-3 py-1 rounded-full text-sm">--</span></td>
-                        <td class="p-4 text-center space-x-1">
-                            <button class="status-btn p-2 rounded-full hover:bg-green-200 dark:hover:bg-green-700 ${status === 'P' ? 'active-P' : ''}" data-status="P" title="Presente">P</button>
-                            <button class="status-btn p-2 rounded-full hover:bg-red-200 dark:hover:bg-red-700 ${status === 'F' ? 'active-F' : ''}" data-status="F" title="Falta">F</button>
-                            <button class="status-btn p-2 rounded-full hover:bg-yellow-200 dark:hover:bg-yellow-700 ${status === 'J' ? 'active-J' : ''}" data-status="J" title="Justificado">J</button>
-                            <button class="delete-btn p-2 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-100 dark:hover:bg-gray-700" title="Apagar Aluno"><svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
-                        </td>
-                    </tr>`;
-            }).join('');
+            // 2. Filtra os alunos baseado na busca
+            const filteredStudents = sortedStudents.filter(student => student.name.toLowerCase().includes(searchTerm));
+
+            // 3. Atualiza o DOM uma única vez
+            if (cls.students.length === 0) {
+                $('#studentList').innerHTML = '';
+                $('#empty-state').classList.remove('hidden');
+                $('#empty-search-state').classList.add('hidden');
+            } else if (filteredStudents.length === 0) {
+                $('#studentList').innerHTML = '';
+                $('#empty-state').classList.add('hidden');
+                $('#empty-search-state').classList.remove('hidden');
+            } else {
+                $('#empty-state').classList.add('hidden');
+                $('#empty-search-state').classList.add('hidden');
+                $('#studentList').innerHTML = filteredStudents.map((student, index) => {
+                    const status = dailyRecord[student.id] || '';
+                    return `
+                        <tr data-id="${student.id}">
+                            <td class="p-4 text-sm text-gray-500">${index + 1}</td>
+                            <td class="p-4 font-medium"><span contenteditable="true" class="edit-name p-1 rounded-md">${student.name}</span></td>
+                            <td class="p-4 text-center"><span class="status-indicator font-semibold px-3 py-1 rounded-full text-sm">--</span></td>
+                            <td class="p-4 text-center space-x-1">
+                                <button class="status-btn p-2 rounded-full hover:bg-green-200 dark:hover:bg-green-700 ${status === STATUS_PRESENT ? 'active-P' : ''}" data-status="${STATUS_PRESENT}" title="Presente">P</button>
+                                <button class="status-btn p-2 rounded-full hover:bg-red-200 dark:hover:bg-red-700 ${status === STATUS_ABSENT ? 'active-F' : ''}" data-status="${STATUS_ABSENT}" title="Falta">F</button>
+                                <button class="status-btn p-2 rounded-full hover:bg-yellow-200 dark:hover:bg-yellow-700 ${status === STATUS_JUSTIFIED ? 'active-J' : ''}" data-status="${STATUS_JUSTIFIED}" title="Justificado">J</button>
+                                <button class="delete-btn p-2 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-100 dark:hover:bg-gray-700" title="Apagar Aluno"><svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                            </td>
+                        </tr>`;
+                }).join('');
+            }
             
             $$('.sortable-header span').forEach(s => s.textContent = '');
             $(`#sort-by-${sortState.key} span`).textContent = sortState.asc ? '▲' : '▼';
 
             updateStatusIndicators();
             updateAttendanceSummary();
-            handleSearch();
         };
         
         const updateStatusIndicators = () => {
@@ -417,9 +457,9 @@
                 const status = dailyRecord[row.dataset.id] || '';
                 const indicator = row.querySelector('.status-indicator');
                 const statusInfo = {
-                    'P': { text: 'Presente', bg: 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300' },
-                    'F': { text: 'Falta', bg: 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300' },
-                    'J': { text: 'Justificado', bg: 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300' },
+                    [STATUS_PRESENT]: { text: 'Presente', bg: 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300' },
+                    [STATUS_ABSENT]: { text: 'Falta', bg: 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300' },
+                    [STATUS_JUSTIFIED]: { text: 'Justificado', bg: 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300' },
                     '': { text: '--', bg: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300' }
                 };
                 indicator.textContent = statusInfo[status].text;
@@ -438,9 +478,9 @@
              const date = $('#attendanceDate').value;
              const dailyRecord = cls.history[date] || {};
              const statuses = Object.values(dailyRecord);
-             const present = statuses.filter(s => s === 'P').length;
-             const absent = statuses.filter(s => s === 'F').length;
-             const just = statuses.filter(s => s === 'J').length;
+             const present = statuses.filter(s => s === STATUS_PRESENT).length;
+             const absent = statuses.filter(s => s === STATUS_ABSENT).length;
+             const just = statuses.filter(s => s === STATUS_JUSTIFIED).length;
              $('#attendance-summary').innerHTML = `
                 <span class="bg-gray-200 dark:bg-gray-700/50 px-3 py-1 rounded-full">Total: <strong>${total}</strong></span>
                 <span class="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 px-3 py-1 rounded-full">Presentes: <strong>${present}</strong></span>
@@ -460,46 +500,47 @@
         };
 
         const setupEventListeners = () => {
+            // --- GERAL ---
             $('#login-form').addEventListener('submit', handleLogin);
-            $('#togglePassword').addEventListener('click', () => {
-                const isPassword = $('#password').type === 'password';
-                $('#password').type = isPassword ? 'text' : 'password';
-                $('#eye-open-icon').classList.toggle('hidden', isPassword);
-                $('#eye-closed-icon').classList.toggle('hidden', !isPassword);
-            });
             $('#logout-btn').addEventListener('click', handleLogout);
+            $('#attendanceDate').addEventListener('change', renderAll);
             $('#class-selector').addEventListener('change', (e) => { activeClassId = e.target.value; renderAll(); saveData(true); });
+            window.addEventListener('beforeunload', () => saveData(true));
+            document.addEventListener('keydown', (e) => e.key === "Escape" && closeAllModals());
+
+            // --- DELEGAÇÃO DE EVENTOS (MAIS EFICIENTE) ---
             $('main').addEventListener('input', (e) => {
                  if(e.target.matches('[contenteditable][data-detail]')) {
                     const cls = getActiveClass(); if(!cls) return;
                     cls.details[e.target.dataset.detail] = e.target.textContent;
                     saveData();
-                 }
-            });
-            $('#addStudentBtn').addEventListener('click', handleAddStudent);
-            $('#studentName').addEventListener('keypress', (e) => e.key === 'Enter' && handleAddStudent(e));
-            $('#studentList').addEventListener('click', handleStudentListClick);
-            $('#studentList').addEventListener('input', (e) => {
-                if(e.target.matches('.edit-name')) {
+                 } else if(e.target.matches('.edit-name')) {
                     const student = getActiveClass().students.find(s => s.id === e.target.closest('tr').dataset.id);
                     if(student) student.name = e.target.textContent;
                     saveData();
-                }
+                 }
             });
+            $('#studentList').addEventListener('click', handleStudentListClick);
+            
+            // --- AÇÕES ---
+            $('#addStudentBtn').addEventListener('click', handleAddStudent);
+            $('#studentName').addEventListener('keypress', (e) => e.key === 'Enter' && handleAddStudent(e));
             $('#deleteAllStudentsBtn').addEventListener('click', handleDeleteAllStudents);
-            $('#attendanceDate').addEventListener('change', renderAll);
-            $('#markAllPresentBtn').addEventListener('click', () => updateAllStatuses('P'));
+            $('#markAllPresentBtn').addEventListener('click', () => updateAllStatuses(STATUS_PRESENT));
             $('#markAbsenteesBtn').addEventListener('click', handleMarkAbsentees);
             $('#clearAllBtn').addEventListener('click', () => updateAllStatuses(''));
-            $('#searchStudent').addEventListener('input', handleSearch);
+            $('#searchStudent').addEventListener('input', () => renderStudentList()); // Performance
             $('#sort-by-name').addEventListener('click', () => handleSort('name'));
             $('#sort-by-status').addEventListener('click', () => handleSort('status'));
+            $('#exportPdfBtn').addEventListener('click', handleExportPdf);
+            $('#shareBtn').addEventListener('click', handleShare);
+            
+            // --- MODAIS ---
             $('#settings-btn').addEventListener('click', () => openModal('#settingsModal'));
             $('#reports-btn').addEventListener('click', openReportsModal);
             $('#manage-classes-btn').addEventListener('click', openManageClassesModal);
-            $('#exportPdfBtn').addEventListener('click', handleExportPdf);
-            $('#shareBtn').addEventListener('click', handleShare);
-            $$('.modal-close-btn, #cancelButton').forEach(btn => btn.addEventListener('click', () => closeAllModals()));
+            $$('.modal-close-btn').forEach(btn => btn.addEventListener('click', () => closeAllModals()));
+            $$('.modal-backdrop').forEach(m => m.addEventListener('click', e => e.target === m && closeAllModals()));
             $('#pasteListBtn').addEventListener('click', () => openModal('#pasteModal'));
             $('#confirmPasteButton').addEventListener('click', handlePasteList);
             $('#saveSettingsBtn').addEventListener('click', handleSaveSettings);
@@ -507,17 +548,36 @@
             $('#importDataInput').addEventListener('change', handleImportData);
             $('#addClassBtn').addEventListener('click', handleAddClass);
             $('#manageClassesModal').addEventListener('click', handleManageClassesClick);
-            window.addEventListener('beforeunload', () => saveData(true));
-            document.addEventListener('keydown', (e) => e.key === "Escape" && closeAllModals());
-            $$('.modal-backdrop').forEach(m => m.addEventListener('click', e => e.target === m && closeAllModals()));
+            $('#saveForcedPasswordBtn').addEventListener('click', handleSaveForcedPassword);
+            
+            // --- UX ADICIONAL ---
+            $('main').addEventListener('paste', (e) => { // Sanitização de 'colar'
+                if (e.target.matches('[contenteditable="true"]')) {
+                    e.preventDefault();
+                    const text = e.clipboardData.getData('text/plain');
+                    document.execCommand('insertText', false, text);
+                }
+            });
+            $('#togglePassword').addEventListener('click', () => {
+                const isPassword = $('#password').type === 'password';
+                $('#password').type = isPassword ? 'text' : 'password';
+                $('#eye-open-icon').classList.toggle('hidden', isPassword);
+                $('#eye-closed-icon').classList.toggle('hidden', !isPassword);
+            });
         };
 
         const handleLogin = (e) => {
             e.preventDefault();
             $('#login-error').textContent = '';
-            if ($('#password').value === data.password) {
-                sessionStorage.setItem('isLoggedIn', 'true');
-                checkLogin();
+            const passwordInput = $('#password').value;
+            if (passwordInput === data.password) {
+                // Forçar mudança de senha se a senha for a padrão.
+                if (data.password === DEFAULT_PASSWORD) {
+                    openModal('#forcePasswordChangeModal');
+                } else {
+                    sessionStorage.setItem(LOGGED_IN_KEY, 'true');
+                    checkLogin();
+                }
             } else {
                 $('#login-error').textContent = 'Senha incorreta.';
                 $('#login-form').classList.add('animate-shake');
@@ -527,7 +587,7 @@
 
         const handleLogout = () => {
             showConfirmationModal('Sair da Aplicação', 'Tem a certeza de que deseja sair?', () => {
-                sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem(LOGGED_IN_KEY);
                 checkLogin();
             });
         };
@@ -538,7 +598,7 @@
             const name = $('#studentName').value.trim();
             if (name) {
                 if (cls.students.some(s => s.name.toLowerCase() === name.toLowerCase())) {
-                    showToast("Este aluno já existe na turma."); return;
+                    showToast("Este aluno já existe na turma.", 'error'); return;
                 }
                 cls.students.push({ id: `student_${Date.now()}`, name });
                 $('#studentName').value = '';
@@ -548,12 +608,12 @@
         };
 
         const handleStudentListClick = (e) => {
-            const btn = e.target.closest('button'); if(!btn) return;
-            const studentId = btn.closest('tr').dataset.id;
+            const btn = e.target.closest('button'); if (!btn) return;
+            const row = btn.closest('tr');
+            if (!row || !row.dataset.id) return;
+
+            const studentId = row.dataset.id;
             const cls = getActiveClass(); if (!cls) return;
-            const studentIndex = cls.students.findIndex(s => s.id === studentId);
-            
-            if (studentIndex === -1 && !btn.closest("#empty-state, #empty-search-state")) return; // Prevenção de erro
             
             if (btn.classList.contains('status-btn')) {
                 const date = $('#attendanceDate').value;
@@ -563,8 +623,19 @@
                 cls.history[date][studentId] = currentStatus === newStatus ? '' : newStatus;
                 renderStudentList(); saveData(true);
             } else if (btn.classList.contains('delete-btn')) {
+                const studentIndex = cls.students.findIndex(s => s.id === studentId);
+                if (studentIndex === -1) return; // Segurança extra
+                
                  showConfirmationModal('Apagar Aluno', `Tem a certeza de que deseja apagar "${cls.students[studentIndex].name}"?`, () => {
+                    const studentIdToDelete = cls.students[studentIndex].id;
+                    // Remove o aluno da lista
                     cls.students.splice(studentIndex, 1);
+                    
+                    // --- CORREÇÃO: REMOVE DADOS ÓRFÃOS DO HISTÓRICO ---
+                    Object.keys(cls.history).forEach(dateKey => {
+                        delete cls.history[dateKey][studentIdToDelete];
+                    });
+                    
                     renderStudentList(); saveData(true);
                     showToast('Aluno removido!');
                 });
@@ -573,9 +644,10 @@
 
         const handleDeleteAllStudents = () => {
             const cls = getActiveClass();
-            if (!cls || cls.students.length === 0) return showToast("Não há alunos para apagar.");
-            showConfirmationModal('Apagar Todos os Alunos', 'Tem a certeza de que deseja apagar TODOS os alunos desta turma?', () => {
+            if (!cls || cls.students.length === 0) return showToast("Não há alunos para apagar.", 'info');
+            showConfirmationModal('Apagar Todos os Alunos', 'Tem a certeza de que deseja apagar TODOS os alunos e seu histórico de presença desta turma?', () => {
                 cls.students = [];
+                cls.history = {}; // Limpa o histórico também
                 renderStudentList(); saveData(true);
                 showToast('Todos os alunos foram apagados.');
             });
@@ -596,7 +668,7 @@
              let markedCount = 0;
              cls.students.forEach(student => {
                  if (!cls.history[date][student.id]) {
-                     cls.history[date][student.id] = 'F';
+                     cls.history[date][student.id] = STATUS_ABSENT;
                      markedCount++;
                  }
              });
@@ -604,37 +676,14 @@
                 renderStudentList(); saveData(true);
                 showToast(`${markedCount} aluno(s) ausente(s) marcado(s) com falta.`);
              } else {
-                showToast("Nenhum aluno ausente para marcar.");
+                showToast("Nenhum aluno ausente para marcar.", 'info');
              }
         };
         
         const handleSort = (key) => {
-            if (sortState.key === key) {
-                sortState.asc = !sortState.asc;
-            } else {
-                sortState.key = key;
-                sortState.asc = true;
-            }
+            if (sortState.key === key) sortState.asc = !sortState.asc;
+            else { sortState.key = key; sortState.asc = true; }
             renderStudentList();
-        };
-
-        const handleSearch = () => {
-            const searchTerm = $('#searchStudent').value.toLowerCase();
-            const cls = getActiveClass();
-            let resultsFound = false;
-            
-            if (!cls) return;
-
-            $$('#studentList tr[data-id]').forEach(row => {
-                const studentName = row.querySelector('.edit-name')?.textContent.toLowerCase() || '';
-                const isVisible = studentName.includes(searchTerm);
-                row.classList.toggle('hidden', !isVisible);
-                if (isVisible) resultsFound = true;
-            });
-
-            const hasStudents = cls.students.length > 0;
-            $('#empty-state').classList.toggle('hidden', hasStudents || searchTerm !== '');
-            $('#empty-search-state').classList.toggle('hidden', resultsFound || !hasStudents || searchTerm === '');
         };
         
         const handlePasteList = () => {
@@ -654,17 +703,39 @@
         };
         
         const handleSaveSettings = () => {
+            const btn = $('#saveSettingsBtn');
+            toggleButtonLoading(btn, true);
             const newPassword = $('#newPassword').value;
             if (newPassword) {
                 if (newPassword.length < 4) {
-                    showToast("A nova senha deve ter pelo menos 4 caracteres."); return;
+                    showToast("A nova senha deve ter pelo menos 4 caracteres.", 'error');
+                    toggleButtonLoading(btn, false);
+                    return;
                 }
                 data.password = newPassword;
                 $('#newPassword').value = "";
                 showToast("Senha alterada com sucesso!");
             }
+            // Simula um salvamento para dar feedback visual
+            setTimeout(() => {
+                saveData(true);
+                closeAllModals();
+                toggleButtonLoading(btn, false);
+            }, 500);
+        };
+        
+        const handleSaveForcedPassword = () => {
+            const newPassword = $('#forceNewPassword').value;
+            if (newPassword.length < 4) {
+                $('#force-password-error').textContent = "A senha deve ter pelo menos 4 caracteres.";
+                return;
+            }
+            data.password = newPassword;
+            data.firstLogin = false; // Marca que a senha padrão já foi trocada
             saveData(true);
             closeAllModals();
+            sessionStorage.setItem(LOGGED_IN_KEY, 'true');
+            checkLogin();
         };
 
         const handleExportData = () => {
@@ -690,10 +761,11 @@
                             data = importedData;
                             activeClassId = data.activeClassId || data.classes[0]?.id;
                             saveData(true);
-                            location.reload();
+                            showToast("Dados importados! A página será recarregada.");
+                            setTimeout(() => location.reload(), 1500);
                         });
-                    } else { showToast("Ficheiro de backup inválido."); }
-                } catch (error) { showToast("Erro ao ler o ficheiro de backup."); }
+                    } else { showToast("Ficheiro de backup inválido.", 'error'); }
+                } catch (error) { showToast("Erro ao ler o ficheiro de backup.", 'error'); }
             };
             reader.readAsText(file);
         };
@@ -714,13 +786,13 @@
 
         const handleManageClassesClick = (e) => {
             const btn = e.target.closest('button'); if (!btn) return;
-            const classId = btn.closest('[data-id]').dataset.id;
+            const classItem = btn.closest('[data-id]');
+            const classId = classItem.dataset.id;
             const classIndex = data.classes.findIndex(c => c.id === classId);
 
             if (btn.classList.contains('delete-class-btn')) {
                 if (data.classes.length === 1) {
-                    showToast("Não pode apagar a única turma existente.");
-                    return;
+                    showToast("Não pode apagar a única turma existente.", 'info'); return;
                 }
                 showConfirmationModal("Apagar Turma", "Tem a certeza? Todos os alunos e o histórico de presenças desta turma serão apagados permanentemente.", () => {
                     data.classes.splice(classIndex, 1);
@@ -733,12 +805,23 @@
                     saveData(true);
                 });
             } else if (btn.classList.contains('edit-class-btn')) {
-                const newName = prompt("Novo nome para a turma:", data.classes[classIndex].name);
-                if (newName && newName.trim()) {
-                    data.classes[classIndex].name = newName.trim();
-                    renderManageClassesList();
+                // --- MELHORIA: Edição Inline ---
+                const nameSpan = classItem.querySelector('.class-name-span');
+                const isEditing = nameSpan.isContentEditable;
+
+                if(isEditing) {
+                    nameSpan.contentEditable = false;
+                    nameSpan.blur(); // Remove o foco
+                    btn.innerHTML = '✏️';
+                    const newName = nameSpan.textContent.trim();
+                    if(newName) data.classes[classIndex].name = newName;
                     updateClassSelector();
                     saveData(true);
+                } else {
+                    nameSpan.contentEditable = true;
+                    nameSpan.focus();
+                    document.execCommand('selectAll', false, null); // Seleciona o texto
+                    btn.innerHTML = '💾';
                 }
             }
         };
@@ -772,7 +855,7 @@
                 </div>`;
             
             html2pdf().set({
-                filename: `ListaDePresenca_${cls.name.trim()}_${date}.pdf`,
+                filename: `ListaDePresenca_${cls.name.replace(/ /g, '_')}_${date}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
@@ -788,19 +871,25 @@
             if (navigator.share) {
                 try {
                     await navigator.share({ title: 'Lista de Presença', text: textToShare });
-                } catch (error) { showToast('Partilha cancelada.'); }
+                } catch (error) { showToast('Partilha cancelada.', 'info'); }
             } else {
-                showToast('Partilha não suportada.');
+                showToast('Partilha não suportada.', 'info');
             }
         };
         
+        // --- FUNÇÕES UTILITÁRIAS ---
         const showConfirmationModal = (title, message, onConfirm) => {
             $('#modalTitle').textContent = title;
             $('#modalMessage').textContent = message;
-            const confirmHandler = () => { onConfirm(); closeAllModals(); };
-            const cancelHandler = () => closeAllModals();
-            $('#confirmButton').onclick = confirmHandler;
-            $('#cancelButton').onclick = cancelHandler;
+            const confirmBtn = $('#confirmButton');
+            
+            // Usamos AbortController para garantir que o listener seja removido
+            const controller = new AbortController();
+            confirmBtn.addEventListener('click', () => {
+                onConfirm();
+                closeAllModals();
+                controller.abort();
+            }, { signal: controller.signal });
             openModal('#confirmationModal');
         };
 
@@ -815,10 +904,10 @@
         const renderManageClassesList = () => {
             $('#classList').innerHTML = data.classes.map(c => `
                 <div data-id="${c.id}" class="flex items-center justify-between p-2 border rounded-md dark:border-gray-600">
-                    <span class="truncate pr-2">${c.name}</span>
+                    <span class="class-name-span truncate pr-2 p-1 rounded-md">${c.name}</span>
                     <div class="flex-shrink-0">
-                        <button class="edit-class-btn p-1 text-blue-500 hover:text-blue-700">✏️</button>
-                        <button class="delete-class-btn p-1 text-red-500 hover:text-red-700">🗑️</button>
+                        <button class="edit-class-btn p-1 text-blue-500 hover:text-blue-700" title="Editar nome">✏️</button>
+                        <button class="delete-class-btn p-1 text-red-500 hover:text-red-700" title="Apagar turma">🗑️</button>
                     </div>
                 </div>`).join('');
         };
@@ -826,7 +915,7 @@
         const openReportsModal = () => {
             const cls = getActiveClass();
             if (!cls || cls.students.length === 0) {
-                showToast("Não há alunos na turma para gerar relatório."); return;
+                showToast("Não há alunos na turma para gerar relatório.", 'info'); return;
             }
             
             const stats = {};
@@ -835,8 +924,12 @@
             Object.values(cls.history).forEach(dailyRecord => {
                 Object.entries(dailyRecord).forEach(([studentId, status]) => {
                     if (stats[studentId] && status) {
-                        stats[studentId][status]++;
-                        stats[studentId].total++;
+                        if (stats[studentId][status] !== undefined) {
+                           stats[studentId][status]++;
+                        }
+                        if (status === STATUS_PRESENT || status === STATUS_ABSENT) {
+                           stats[studentId].total++;
+                        }
                     }
                 });
             });
@@ -854,8 +947,8 @@
                         return `<tr class="border-b dark:border-gray-700">
                             <td class="p-2 font-medium">${s.name}</td><td class="p-2 text-center">${s_stats.P}</td>
                             <td class="p-2 text-center">${s_stats.F}</td><td class="p-2 text-center">${s_stats.J}</td>
-                            <td class="p-2 text-center">${attendanceRate}%</td>
-                            <td class="p-2 text-center"><button data-id="${s.id}" class="export-student-report-btn text-blue-500">Exportar PDF</button></td>
+                            <td class="p-2 text-center">${attendanceRate === "N/A" ? "N/A" : attendanceRate + "%"}</td>
+                            <td class="p-2 text-center"><button data-id="${s.id}" class="export-student-report-btn text-blue-500 hover:underline">Exportar PDF</button></td>
                         </tr>`
                     }).join('')}
                     </tbody>
@@ -877,12 +970,35 @@
 
             Object.entries(cls.history).sort().forEach(([date, dailyRecord]) => {
                 if(dailyRecord[studentId]) {
-                    reportHtml += `<tr><td style="padding: 5px; border-bottom: 1px solid #ccc;">${new Date(date).toLocaleDateString('pt-BR', {timeZone:'UTC'})}</td><td style="padding: 5px; border-bottom: 1px solid #ccc;">${dailyRecord[studentId]}</td></tr>`;
+                    const statusText = { 'P': 'Presente', 'F': 'Falta', 'J': 'Justificado' }[dailyRecord[studentId]] || dailyRecord[studentId];
+                    reportHtml += `<tr><td style="padding: 5px; border-bottom: 1px solid #ccc;">${new Date(date).toLocaleDateString('pt-BR', {timeZone:'UTC'})}</td><td style="padding: 5px; border-bottom: 1px solid #ccc;">${statusText}</td></tr>`;
                 }
             });
             reportHtml += `</tbody></table></div>`;
             
-            html2pdf().from(reportHtml).set({ filename: `Relatorio_${student.name}.pdf`, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } }).save();
+            html2pdf().from(reportHtml).set({ filename: `Relatorio_${student.name.replace(/ /g, '_')}.pdf`, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } }).save();
+        };
+        
+        const showToast = (message, type = 'success') => {
+            const toast = $('#toast');
+            toast.textContent = message;
+            toast.className = `toast fixed bottom-5 left-1/2 -translate-x-1/2 text-white py-2 px-5 rounded-full shadow-lg z-[70]`;
+            if (type === 'error') toast.classList.add('bg-red-600');
+            else if (type === 'info') toast.classList.add('bg-blue-600');
+            else toast.classList.add('bg-gray-800');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        };
+
+        const toggleButtonLoading = (button, isLoading) => {
+            if(isLoading) {
+                button.disabled = true;
+                button.dataset.originalText = button.innerHTML;
+                button.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Aguarde...`;
+            } else {
+                button.disabled = false;
+                button.innerHTML = button.dataset.originalText;
+            }
         };
 
         const initTheme = () => {
