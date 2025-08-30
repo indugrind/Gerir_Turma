@@ -263,10 +263,9 @@
         // Importações dos módulos do Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- CONFIGURAÇÃO DO FIREBASE ---
-        // As variáveis __firebase_config e __initial_auth_token são injetadas pelo ambiente.
         const firebaseConfig = typeof __firebase_config !== 'undefined' 
             ? JSON.parse(__firebase_config)
             : {
@@ -284,9 +283,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- Referência ao App ID ---
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
         document.addEventListener('DOMContentLoaded', () => {
             const $ = (selector) => document.querySelector(selector);
             const $$ = (selector) => document.querySelectorAll(selector);
@@ -299,11 +295,11 @@
             const STATUS_JUSTIFIED = 'J';
             
             // --- ESTADO DA APLICAÇÃO ---
-            let data = {}; // Os dados virão do Firestore
+            let data = {};
             let activeClassId = null;
             let sortState = { key: 'name', asc: true };
             let debounceTimeout;
-            let unsubscribeFromFirestore = null; // Função para parar de ouvir as atualizações
+            let unsubscribeFromFirestore = null;
 
             const defaultData = {
                 password: DEFAULT_PASSWORD,
@@ -316,14 +312,11 @@
                 initTheme();
                 setupEventListeners();
                 
-                // Monitoriza o estado de autenticação
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
-                        // Utilizador está autenticado, vamos carregar os dados
                         console.log("Utilizador autenticado:", user.uid);
                         loadData(user.uid);
                     } else {
-                        // Utilizador não está autenticado, tentamos fazer login anónimo ou com token
                         console.log("Nenhum utilizador autenticado, a tentar login...");
                         try {
                             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -340,21 +333,20 @@
             };
 
             const initApp = () => {
-                // A app é inicializada quando os dados são carregados do Firestore
                 $('#loading-screen').classList.add('hidden');
                 
                 if (sessionStorage.getItem(LOGGED_IN_KEY) === 'true') {
                     $('#login-screen').classList.add('hidden');
                     $('main').classList.remove('hidden');
                     
-                    if (data.classes.length === 0) {
+                    if (!data.classes || data.classes.length === 0) {
                         const newClass = createNewClass("Minha Primeira Turma");
-                        data.classes.push(newClass);
+                        data.classes = [newClass];
                         activeClassId = newClass.id;
                         data.activeClassId = activeClassId;
-                        saveData(true); // Guarda a nova turma inicial
+                        saveData(true);
                     }
-                    activeClassId = data.activeClassId || data.classes[0]?.id;
+                    activeClassId = data.activeClassId || (data.classes && data.classes[0]?.id);
                     $('#attendanceDate').valueAsDate = new Date();
                     updateClassSelector();
                     renderAll();
@@ -367,28 +359,26 @@
             };
             
             const loadData = (userId) => {
-                // Para de ouvir o 'listener' anterior para evitar duplicações
                 if (unsubscribeFromFirestore) {
                     unsubscribeFromFirestore();
                 }
 
-                const docRef = doc(db, "artifacts", appId, "users", userId, "data", "attendancelist");
+                const docRef = doc(db, "users", userId);
                 
                 unsubscribeFromFirestore = onSnapshot(docRef, (docSnap) => {
                     if (docSnap.exists()) {
                         console.log("Dados recebidos do Firestore.");
                         data = docSnap.data();
-                        if (!data.classes) data.classes = []; // Garante que a propriedade classes existe
+                        if (!data.classes) data.classes = [];
                     } else {
                         console.log("Nenhum documento encontrado, a criar um novo com dados padrão.");
                         data = JSON.parse(JSON.stringify(defaultData));
-                        // Guarda imediatamente os dados padrão no Firestore
                         setDoc(docRef, data);
                     }
-                    initApp(); // Inicializa a UI com os dados carregados/criados
+                    initApp();
                 }, (error) => {
                     console.error("Erro ao ouvir dados do Firestore:", error);
-                    $('#loading-screen').innerHTML = '<p>Não foi possível carregar os dados. Verifique a sua ligação e atualize.</p>';
+                    $('#loading-screen').innerHTML = '<p>Não foi possível carregar os dados. Verifique as suas regras de segurança no Firebase.</p>';
                 });
             };
 
@@ -404,8 +394,8 @@
                     try {
                         data.activeClassId = activeClassId;
                         const userId = auth.currentUser.uid;
-                        const docRef = doc(db, "artifacts", appId, "users", userId, "data", "attendancelist");
-                        await setDoc(docRef, data, { merge: true }); // Usar merge para evitar sobrescrever dados concorrentes
+                        const docRef = doc(db, "users", userId);
+                        await setDoc(docRef, data, { merge: true });
                         showToast("Alterações guardadas na nuvem");
                     } catch (e) {
                         showToast("Erro ao guardar dados.", 'error');
@@ -416,11 +406,11 @@
                 if (immediate) {
                     saveAction();
                 } else {
-                    debounceTimeout = setTimeout(saveAction, 1500); // Aumentado para escritas em rede
+                    debounceTimeout = setTimeout(saveAction, 1500);
                 }
             };
 
-            const getActiveClass = () => data.classes.find(c => c.id === activeClassId);
+            const getActiveClass = () => data.classes && data.classes.find(c => c.id === activeClassId);
 
             const createNewClass = (name) => ({
                 id: `class_${Date.now()}`,
@@ -430,8 +420,6 @@
                 history: {}
             });
             
-            // --- Lógica de renderização (maioria sem alterações) ---
-
             const renderAll = () => {
                 const cls = getActiveClass();
                 if (!cls) {
@@ -457,10 +445,10 @@
                 const cls = getActiveClass();
                 if (!cls) return;
                 $('#class-details').innerHTML = `
-                    <span>Professor(a): <span contenteditable="true" data-detail="teacher" class="p-1 rounded-md">${cls.details.teacher}</span></span>
-                    <span>Sala: <span contenteditable="true" data-detail="room" class="p-1 rounded-md">${cls.details.room}</span></span>
-                    <span>Turno: <span contenteditable="true" data-detail="shift" class="p-1 rounded-md">${cls.details.shift}</span></span>
-                    <span>Bimestre: <span contenteditable="true" data-detail="bimester" class="p-1 rounded-md">${cls.details.bimester}</span></span>`;
+                    <span>Professor(a): <span contenteditable="true" data-detail="teacher" class="p-1 rounded-md">${cls.details.teacher || ''}</span></span>
+                    <span>Sala: <span contenteditable="true" data-detail="room" class="p-1 rounded-md">${cls.details.room || ''}</span></span>
+                    <span>Turno: <span contenteditable="true" data-detail="shift" class="p-1 rounded-md">${cls.details.shift || ''}</span></span>
+                    <span>Bimestre: <span contenteditable="true" data-detail="bimester" class="p-1 rounded-md">${cls.details.bimester || ''}</span></span>`;
             };
             
             const renderStudentList = () => {
@@ -471,10 +459,10 @@
                 }
                 
                 const date = $('#attendanceDate').value;
-                const dailyRecord = cls.history[date] || {};
+                const dailyRecord = cls.history && cls.history[date] ? cls.history[date] : {};
                 const searchTerm = $('#searchStudent').value.toLowerCase();
 
-                const sortedStudents = [...cls.students].sort((a, b) => {
+                const sortedStudents = [...(cls.students || [])].sort((a, b) => {
                     let valA = (sortState.key === 'name') ? a.name.toLowerCase() : (dailyRecord[a.id] || 'z');
                     let valB = (sortState.key === 'name') ? b.name.toLowerCase() : (dailyRecord[b.id] || 'z');
                     if (valA < valB) return sortState.asc ? -1 : 1;
@@ -484,7 +472,7 @@
 
                 const filteredStudents = sortedStudents.filter(student => student.name.toLowerCase().includes(searchTerm));
 
-                if (cls.students.length === 0) {
+                if (!cls.students || cls.students.length === 0) {
                     $('#studentList').innerHTML = '';
                     $('#empty-state').classList.remove('hidden');
                     $('#empty-search-state').classList.add('hidden');
@@ -523,7 +511,7 @@
                 const date = $('#attendanceDate').value;
                 const cls = getActiveClass();
                 if(!cls) return;
-                const dailyRecord = cls.history[date] || {};
+                const dailyRecord = cls.history && cls.history[date] ? cls.history[date] : {};
 
                 $$('#studentList tr[data-id]').forEach(row => {
                     const status = dailyRecord[row.dataset.id] || '';
@@ -541,14 +529,14 @@
 
             const updateAttendanceSummary = () => {
                 const cls = getActiveClass();
-                if (!cls) return;
+                if (!cls || !cls.students) return;
                 const total = cls.students.length;
                 if(total === 0) {
                     $('#attendance-summary').innerHTML = '';
                     return;
                 }
                 const date = $('#attendanceDate').value;
-                const dailyRecord = cls.history[date] || {};
+                const dailyRecord = cls.history && cls.history[date] ? cls.history[date] : {};
                 const statuses = Object.values(dailyRecord);
                 const present = statuses.filter(s => s === STATUS_PRESENT).length;
                 const absent = statuses.filter(s => s === STATUS_ABSENT).length;
@@ -568,7 +556,7 @@
             
             const updateClassSelector = () => {
                 const cls = getActiveClass();
-                $('#class-selector').innerHTML = data.classes.map(c => `<option value="${c.id}" ${c.id === activeClassId ? 'selected' : ''}>${c.name}</option>`).join('') 
+                $('#class-selector').innerHTML = data.classes && data.classes.map(c => `<option value="${c.id}" ${c.id === activeClassId ? 'selected' : ''}>${c.name}</option>`).join('') 
                     || `<option>Nenhuma turma</option>`;
                 if (cls) {
                     $('#class-title-header').textContent = cls.name;
@@ -576,8 +564,6 @@
                 }
             };
             
-            // --- EVENT LISTENERS (com pequenas adaptações para saveData) ---
-
             const setupEventListeners = () => {
                 $('#login-form').addEventListener('submit', handleLogin);
                 $('#logout-btn').addEventListener('click', handleLogout);
@@ -597,10 +583,12 @@
                 $('main').addEventListener('input', (e) => {
                     if(e.target.matches('[contenteditable][data-detail]')) {
                         const cls = getActiveClass(); if(!cls) return;
+                        if (!cls.details) cls.details = {};
                         cls.details[e.target.dataset.detail] = e.target.textContent;
                         saveData();
                     } else if(e.target.matches('.edit-name')) {
-                        const student = getActiveClass().students.find(s => s.id === e.target.closest('tr').dataset.id);
+                        const cls = getActiveClass(); if (!cls) return;
+                        const student = cls.students.find(s => s.id === e.target.closest('tr').dataset.id);
                         if(student) student.name = e.target.textContent;
                         saveData();
                     }
@@ -679,7 +667,6 @@
             const handleLogout = () => {
                 showConfirmationModal('Sair da Aplicação', 'Tem a certeza de que deseja sair?', () => {
                     sessionStorage.removeItem(LOGGED_IN_KEY);
-                    // Não fazemos signOut do Firebase anónimo para manter a sessão de dados
                     $('main').classList.add('hidden');
                     $('#login-screen').classList.remove('hidden');
                 });
@@ -688,6 +675,7 @@
             const handleAddStudent = (e) => {
                 e.preventDefault();
                 const cls = getActiveClass(); if (!cls) return;
+                if (!cls.students) cls.students = [];
                 const name = $('#studentName').value.trim();
                 if (name) {
                     if (cls.students.some(s => s.name.toLowerCase() === name.toLowerCase())) {
@@ -710,6 +698,7 @@
                 
                 if (btn.classList.contains('status-btn')) {
                     const date = $('#attendanceDate').value;
+                    if (!cls.history) cls.history = {};
                     if (!cls.history[date]) cls.history[date] = {};
                     const currentStatus = cls.history[date][studentId];
                     const newStatus = btn.dataset.status;
@@ -723,9 +712,11 @@
                         const studentIdToDelete = cls.students[studentIndex].id;
                         cls.students.splice(studentIndex, 1);
                         
-                        Object.keys(cls.history).forEach(dateKey => {
-                            delete cls.history[dateKey][studentIdToDelete];
-                        });
+                        if (cls.history) {
+                            Object.keys(cls.history).forEach(dateKey => {
+                                delete cls.history[dateKey][studentIdToDelete];
+                            });
+                        }
                         
                         renderStudentList(); saveData(true);
                         showToast('Aluno removido!');
@@ -735,7 +726,7 @@
 
             const handleDeleteAllStudents = () => {
                 const cls = getActiveClass();
-                if (!cls || cls.students.length === 0) return showToast("Não há alunos para apagar.", 'info');
+                if (!cls || !cls.students || cls.students.length === 0) return showToast("Não há alunos para apagar.", 'info');
                 showConfirmationModal('Apagar Todos os Alunos', 'Tem a certeza de que deseja apagar TODOS os alunos e o seu histórico de presença desta turma?', () => {
                     cls.students = [];
                     cls.history = {};
@@ -745,16 +736,18 @@
             };
             
             const updateAllStatuses = (status) => {
-                const cls = getActiveClass(); if (!cls) return;
+                const cls = getActiveClass(); if (!cls || !cls.students) return;
                 const date = $('#attendanceDate').value;
+                if (!cls.history) cls.history = {};
                 if (!cls.history[date]) cls.history[date] = {};
                 cls.students.forEach(student => { cls.history[date][student.id] = status; });
                 renderStudentList(); saveData(true);
             };
 
             const handleMarkAbsentees = () => {
-                const cls = getActiveClass(); if (!cls) return;
+                const cls = getActiveClass(); if (!cls || !cls.students) return;
                 const date = $('#attendanceDate').value;
+                if (!cls.history) cls.history = {};
                 if (!cls.history[date]) cls.history[date] = {};
                 let markedCount = 0;
                 cls.students.forEach(student => {
@@ -779,6 +772,7 @@
             
             const handlePasteList = () => {
                 const cls = getActiveClass(); if (!cls) return;
+                if (!cls.students) cls.students = [];
                 const names = $('#pasteTextarea').value.trim().split('\n').map(name => name.trim()).filter(Boolean);
                 const existingNames = new Set(cls.students.map(s => s.name.toLowerCase()));
                 let addedCount = 0;
@@ -829,9 +823,9 @@
             };
 
             const handleExportPdf = () => {
-                const cls = getActiveClass(); if (!cls) return;
+                const cls = getActiveClass(); if (!cls || !cls.students) return;
                 const date = $('#attendanceDate').value;
-                const dailyRecord = cls.history[date] || {};
+                const dailyRecord = cls.history && cls.history[date] ? cls.history[date] : {};
 
                 const studentRows = cls.students.sort((a,b) => a.name.localeCompare(b.name)).map((student, index) => `
                     <tr style="border-top: 1px solid #e2e8f0;">
@@ -845,7 +839,7 @@
                         <h1 style="font-size: 20px; font-weight: bold; margin-bottom: 15px;">Lista de Presença</h1>
                         <div style="margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px;">
                             <p><strong>Turma:</strong> ${cls.name}</p>
-                            <p><strong>Professor(a):</strong> ${cls.details.teacher}</p>
+                            <p><strong>Professor(a):</strong> ${cls.details.teacher || 'N/A'}</p>
                             <p><strong>Data:</strong> ${new Date(date).toLocaleDateString('pt-BR',{timeZone:'UTC'})}</p>
                         </div>
                         <table style="width: 100%; border-collapse: collapse;">
@@ -865,9 +859,9 @@
             };
 
             const handleShare = async () => {
-                const cls = getActiveClass(); if (!cls) return;
+                const cls = getActiveClass(); if (!cls || !cls.students) return;
                 const date = $('#attendanceDate').value;
-                const dailyRecord = cls.history[date] || {};
+                const dailyRecord = cls.history && cls.history[date] ? cls.history[date] : {};
                 const studentNames = cls.students.map((s, i) => `${i + 1}. ${s.name} (${dailyRecord[s.id] || 'Não marcado'})`).join('\n');
                 const textToShare = `Lista de Presença - ${cls.name}\nData: ${new Date(date).toLocaleDateString('pt-BR',{timeZone:'UTC'})}\n\n${studentNames}`;
                 if (navigator.share) {
@@ -905,6 +899,7 @@
                 const name = $('#newClassName').value.trim();
                 if (name) {
                     const newClass = createNewClass(name);
+                    if (!data.classes) data.classes = [];
                     data.classes.push(newClass);
                     activeClassId = newClass.id;
                     $('#newClassName').value = '';
@@ -957,26 +952,26 @@
             };
 
             const renderManageClassesList = () => {
-                $('#classList').innerHTML = data.classes.map(c => `
+                $('#classList').innerHTML = data.classes && data.classes.map(c => `
                     <div data-id="${c.id}" class="flex items-center justify-between p-2 border rounded-md dark:border-gray-600">
                         <span class="class-name-span truncate pr-2 p-1 rounded-md">${c.name}</span>
                         <div class="flex-shrink-0">
                             <button class="edit-class-btn p-1 text-blue-500 hover:text-blue-700" title="Editar nome">✏️</button>
                             <button class="delete-class-btn p-1 text-red-500 hover:text-red-700" title="Apagar turma">🗑️</button>
                         </div>
-                    </div>`).join('');
+                    </div>`).join('') || '';
             };
             
             const openReportsModal = () => {
                 const cls = getActiveClass();
-                if (!cls || cls.students.length === 0) {
+                if (!cls || !cls.students || cls.students.length === 0) {
                     showToast("Não há alunos na turma para gerar relatório.", 'info'); return;
                 }
                 
                 const stats = {};
                 cls.students.forEach(s => stats[s.id] = { P: 0, F: 0, J: 0, total: 0 });
 
-                Object.values(cls.history).forEach(dailyRecord => {
+                Object.values(cls.history || {}).forEach(dailyRecord => {
                     Object.entries(dailyRecord).forEach(([studentId, status]) => {
                         if (stats[studentId] && status) {
                             if (stats[studentId][status] !== undefined) {
@@ -1023,7 +1018,7 @@
                 <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                     <thead><tr><th style="padding: 5px; border-bottom: 1px solid #000; text-align: left;">Data</th><th style="padding: 5px; border-bottom: 1px solid #000; text-align: left;">Status</th></tr></thead><tbody>`;
 
-                Object.entries(cls.history).sort().forEach(([date, dailyRecord]) => {
+                Object.entries(cls.history || {}).sort().forEach(([date, dailyRecord]) => {
                     if(dailyRecord[studentId]) {
                         const statusText = { 'P': 'Presente', 'F': 'Falta', 'J': 'Justificado' }[dailyRecord[studentId]] || dailyRecord[studentId];
                         reportHtml += `<tr><td style="padding: 5px; border-bottom: 1px solid #ccc;">${new Date(date).toLocaleDateString('pt-BR', {timeZone:'UTC'})}</td><td style="padding: 5px; border-bottom: 1px solid #ccc;">${statusText}</td></tr>`;
@@ -1077,4 +1072,25 @@
     </script>
 </body>
 </html>
+```
+
+### O que foi Corrigido:
+
+1.  **Caminho do Firestore:** Simplifiquei o caminho para `doc(db, "users", userId)`. Isto significa que todos os dados do utilizador (turmas, alunos, histórico) serão guardados num único documento diretamente sob o seu ID de utilizador.
+
+### Ação Necessária da Sua Parte (MUITO IMPORTANTE):
+
+Para que a nova versão funcione, as suas regras de segurança no Firestore **têm de corresponder** a este novo caminho.
+
+Por favor, vá à sua consola Firebase em **Firestore Database -> Rules** e substitua o conteúdo pelas seguintes regras:
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
 
