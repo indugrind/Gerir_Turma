@@ -266,17 +266,14 @@
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- CONFIGURAÇÃO DO FIREBASE ---
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? JSON.parse(__firebase_config)
-            : {
-                // COLE A SUA CONFIGURAÇÃO DO FIREBASE AQUI se não estiver no ambiente
-                apiKey: "SUA_API_KEY",
-                authDomain: "SEU_AUTH_DOMAIN",
-                projectId: "SEU_PROJECT_ID",
-                storageBucket: "SEU_STORAGE_BUCKET",
-                messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-                appId: "SEU_APP_ID"
-            };
+        const firebaseConfig = {
+            apiKey: "AIzaSyC3AEz-7J7NEVhfAzWDEkXauEm71iE-fFk",
+            authDomain: "gerirturma.firebaseapp.com",
+            projectId: "gerirturma",
+            storageBucket: "gerirturma.appspot.com",
+            messagingSenderId: "938833149464",
+            appId: "1:938833149464:web:2fec1f9e1e8074df8fcd6d"
+        };
 
         // --- INICIALIZAÇÃO DO FIREBASE ---
         const app = initializeApp(firebaseConfig);
@@ -1074,23 +1071,25 @@
 </html>
 ```
 
-### O que foi Corrigido:
-
-1.  **Caminho do Firestore:** Simplifiquei o caminho para `doc(db, "users", userId)`. Isto significa que todos os dados do utilizador (turmas, alunos, histórico) serão guardados num único documento diretamente sob o seu ID de utilizador.
-
 ### Ação Necessária da Sua Parte (MUITO IMPORTANTE):
 
-Para que a nova versão funcione, as suas regras de segurança no Firestore **têm de corresponder** a este novo caminho.
+Para garantir que a aplicação funcione, por favor, siga estes dois passos:
 
-Por favor, vá à sua consola Firebase em **Firestore Database -> Rules** e substitua o conteúdo pelas seguintes regras:
+1.  **Atualize o `appId` no Ficheiro:**
+    * No código acima, na secção `<script type="module">`, localize a `firebaseConfig`.
+    * Substitua a linha `appId: "PREENCHA_COM_SEU_APP_ID"` pelo `appId` correto do seu projeto: `1:938833149464:web:2fec1f9e1e8074df8fcd6d`.
 
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-  }
-}
+2.  **Verifique as Regras de Segurança:**
+    * Vá à sua consola Firebase em **Firestore Database -> Rules**.
+    * Confirme que as regras são **exatamente** estas:
+        ```
+        rules_version = '2';
+        service cloud.firestore {
+          match /databases/{database}/documents {
+            match /users/{userId} {
+              allow read, write: if request.auth != null && request.auth.uid == userId;
+            }
+          }
+        }
+        
 
