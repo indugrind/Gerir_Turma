@@ -61,6 +61,7 @@
         .status-btn.active-J { background-color: #f59e0b; color: white; }
         
         .sortable-header { cursor: pointer; user-select: none; }
+        .tab-btn.active { border-color: #3b82f6; color: #3b82f6; }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
@@ -68,32 +69,56 @@
     <!-- Ecrã de Carregamento -->
     <div id="loading-screen" class="fixed inset-0 bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center p-4 z-[100]">
         <svg class="animate-spin h-10 w-10 text-blue-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-        <p id="loading-message" class="text-gray-600 dark:text-gray-300">A ligar à base de dados...</p>
+        <p id="loading-message" class="text-gray-600 dark:text-gray-300">A iniciar aplicação...</p>
     </div>
 
-    <!-- ECRÃ DE LOGIN -->
-    <div id="login-screen" class="fixed inset-0 bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-4 z-50 hidden">
+    <!-- ECRÃ DE AUTENTICAÇÃO -->
+    <div id="auth-screen" class="fixed inset-0 bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-4 z-50 hidden">
         <div class="w-full max-w-sm bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-8">
-            <h2 class="text-2xl font-bold text-center text-gray-700 dark:text-gray-100 mb-2">Login da Lista</h2>
-            <p class="text-center text-gray-500 dark:text-gray-400 mb-6">Por favor, insira a palavra-passe para continuar.</p>
-            <form id="login-form">
-                <div class="mb-4 relative">
-                    <label for="password" class="sr-only">Palavra-passe</label>
-                    <input type="password" id="password" placeholder="Palavra-passe" class="w-full py-2 px-3 pr-10 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
-                    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-700 dark:hover:text-gray-300" aria-label="Mostrar/Ocultar palavra-passe">
-                        <svg id="eye-open-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                        <svg id="eye-closed-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
-                    </button>
+            <div class="mb-6">
+                <div class="flex border-b border-gray-200 dark:border-gray-700">
+                    <button id="tab-login" class="tab-btn flex-1 py-2 text-center font-semibold border-b-2 transition-colors active">Entrar</button>
+                    <button id="tab-register" class="tab-btn flex-1 py-2 text-center font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors">Registar</button>
                 </div>
-                <button type="submit" class="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300">Entrar</button>
-                <p id="login-error" class="text-red-500 text-sm text-center mt-4 h-5"></p>
+            </div>
+            
+            <!-- Formulário de Login -->
+            <form id="login-form" class="">
+                <h2 class="text-2xl font-bold text-center text-gray-700 dark:text-gray-100 mb-6">Bem-vindo de volta!</h2>
+                <div class="space-y-4">
+                    <input type="email" id="login-email" placeholder="Email" required class="w-full py-2 px-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                    <input type="password" id="login-password" placeholder="Palavra-passe" required class="w-full py-2 px-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                </div>
+                <button type="submit" class="w-full mt-6 bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300">Entrar</button>
             </form>
+
+            <!-- Formulário de Registo -->
+            <form id="register-form" class="hidden">
+                 <h2 class="text-2xl font-bold text-center text-gray-700 dark:text-gray-100 mb-6">Crie a sua conta</h2>
+                 <div class="space-y-4">
+                    <input type="email" id="register-email" placeholder="Email" required class="w-full py-2 px-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                    <input type="password" id="register-password" placeholder="Palavra-passe (mín. 6 caracteres)" required class="w-full py-2 px-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                </div>
+                <button type="submit" class="w-full mt-6 bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300">Registar</button>
+            </form>
+
+            <div class="my-6 flex items-center">
+                <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+                <span class="mx-4 text-sm text-gray-500">OU</span>
+                <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+            </div>
+
+            <button id="google-signin-btn" class="w-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-semibold py-2 px-4 rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-300 flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="m6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.222 0-9.618-3.67-11.283-8.591l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C42.011 35.797 44 30.025 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+                Continuar com o Google
+            </button>
+            <p id="auth-error" class="text-red-500 text-sm text-center mt-4 h-5"></p>
         </div>
     </div>
 
     <main class="container mx-auto p-2 sm:p-4 md:p-8 max-w-4xl hidden">
         <header class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-4 sm:p-6 mb-4 sm:mb-8">
-            <div class="flex justify-between items-start">
+            <div class="flex justify-between items-center">
                 <div class="flex items-center gap-2 min-w-0">
                     <h1 id="class-title-header" contenteditable="true" title="Clique para editar o nome da turma" class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-700 dark:text-gray-100 p-1 -ml-1 rounded-md truncate cursor-text">
                         <!-- O nome da turma será preenchido pelo JavaScript -->
@@ -101,6 +126,9 @@
                     <select id="class-selector" class="text-sm bg-gray-200 dark:bg-gray-700 rounded-md p-1 focus:outline-none" title="Trocar Turma"></select>
                 </div>
                 <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                    <div id="user-info" class="hidden sm:flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mr-2">
+                        <span id="user-email" class="truncate"></span>
+                    </div>
                     <button id="reports-btn" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700" title="Relatórios"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" x2="8" y1="13" y2="13"></line><line x1="16" x2="8" y1="17" y2="17"></line><line x1="10" x2="8" y1="9" y2="9"></line></svg></button>
                     <button id="settings-btn" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700" title="Definições"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
                     <button id="logout-btn" class="p-2 rounded-full text-gray-500 hover:bg-red-200 dark:hover:bg-red-700" title="Sair"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></button>
@@ -222,36 +250,9 @@
     <div id="settingsModal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[60]">
         <div class="modal-content bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 w-full max-w-lg">
             <h3 class="text-lg font-bold mb-4">Definições</h3>
-            <div class="space-y-4">
-                <div>
-                    <label for="newPassword" class="block font-semibold mb-1">Alterar Palavra-passe</label>
-                    <input type="password" id="newPassword" placeholder="Mínimo 4 caracteres" class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600">
-                </div>
-                 <!-- A gestão de dados local foi removida, pois agora os dados estão no Firebase -->
-            </div>
+            <p class="text-gray-600 dark:text-gray-300">As definições de palavra-passe foram removidas, pois a segurança é agora gerida pela sua conta Firebase.</p>
             <div class="flex justify-end gap-4 mt-6">
-                 <button class="modal-close-btn bg-gray-200 dark:bg-gray-600 py-2 px-4 rounded-md">Cancelar</button>
-                 <button id="saveSettingsBtn" class="bg-blue-500 text-white py-2 px-4 rounded-md">Guardar</button>
-            </div>
-        </div>
-    </div>
-    <div id="forcePasswordChangeModal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-[60]">
-        <div class="modal-content bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 w-full max-w-md">
-            <h3 class="text-lg font-bold mb-2">Segurança Inicial</h3>
-            <p class="text-gray-600 dark:text-gray-300 mb-4">Por segurança, por favor defina uma nova palavra-passe para a sua lista. A palavra-passe padrão "1234" foi usada.</p>
-            <input type="password" id="forceNewPassword" placeholder="Nova palavra-passe (mínimo 4 caracteres)" class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600">
-            <p id="force-password-error" class="text-red-500 text-sm h-5 mt-1"></p>
-            <div class="flex justify-end gap-4 mt-4">
-                 <button id="saveForcedPasswordBtn" class="bg-blue-500 text-white py-2 px-4 rounded-md w-full">Definir Nova Palavra-passe e Entrar</button>
-            </div>
-        </div>
-    </div>
-    <div id="reportsModal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[60]">
-         <div class="modal-content bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 w-full max-w-4xl">
-            <h3 class="text-lg font-bold mb-4">Relatório de Assiduidade da Turma</h3>
-            <div id="reports-content" class="max-h-[70vh] overflow-y-auto"></div>
-            <div class="flex justify-end gap-4 mt-6">
-                <button class="modal-close-btn bg-gray-200 dark:bg-gray-600 py-2 px-4 rounded-md">Fechar</button>
+                 <button class="modal-close-btn bg-gray-200 dark:bg-gray-600 py-2 px-4 rounded-md">Fechar</button>
             </div>
         </div>
     </div>
@@ -260,13 +261,12 @@
 
     <!-- SCRIPTS DO FIREBASE -->
     <script type="module">
-        // Importações dos módulos do Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- CONFIGURAÇÃO DO FIREBASE ---
-        const firebaseConfigFromUser = {
+        const firebaseConfig = {
             apiKey: "AIzaSyC3AEz-7J7NEVhfAzWDEkXauEm71iE-fFk",
             authDomain: "gerirturma.firebaseapp.com",
             projectId: "gerirturma",
@@ -275,11 +275,6 @@
             appId: "1:938833149464:web:2fec1f9e1e8074df8fcd6d",
             measurementId: "G-PW58Z8K64J"
         };
-        
-        // Usa a configuração do ambiente se disponível, senão, usa a configuração do utilizador
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? JSON.parse(__firebase_config)
-            : firebaseConfigFromUser;
 
         // --- INICIALIZAÇÃO DO FIREBASE ---
         const app = initializeApp(firebaseConfig);
@@ -291,8 +286,6 @@
             const $$ = (selector) => document.querySelectorAll(selector);
 
             // --- CONSTANTES ---
-            const LOGGED_IN_KEY = 'isLoggedIn_v2_firebase';
-            const DEFAULT_PASSWORD = '1234';
             const STATUS_PRESENT = 'P';
             const STATUS_ABSENT = 'F';
             const STATUS_JUSTIFIED = 'J';
@@ -305,10 +298,8 @@
             let unsubscribeFromFirestore = null;
 
             const defaultData = {
-                password: DEFAULT_PASSWORD,
                 classes: [],
                 activeClassId: null,
-                firstLogin: true,
             };
 
             const init = () => {
@@ -317,80 +308,55 @@
                 
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
-                        console.log("Utilizador autenticado:", user.uid);
+                        console.log("Utilizador autenticado:", user.uid, user.email);
+                        $('#loading-screen').classList.add('hidden');
+                        $('#auth-screen').classList.add('hidden');
+                        $('main').classList.remove('hidden');
+                        $('#user-email').textContent = user.email || 'Utilizador Anónimo';
                         loadData(user.uid);
                     } else {
-                        console.log("Nenhum utilizador autenticado, a tentar login...");
-                        try {
-                            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                                await signInWithCustomToken(auth, __initial_auth_token);
-                            } else {
-                                await signInAnonymously(auth);
-                            }
-                        } catch (error) {
-                            console.error("Falha no login anónimo/token:", error);
-                            $('#loading-message').textContent = 'Erro de autenticação. Verifique a consola para detalhes.';
-                        }
+                        console.log("Nenhum utilizador autenticado.");
+                        $('#loading-screen').classList.add('hidden');
+                        $('main').classList.add('hidden');
+                        $('#auth-screen').classList.remove('hidden');
+                        if(unsubscribeFromFirestore) unsubscribeFromFirestore();
+                        data = {};
                     }
                 });
             };
+            
+            const loadData = (userId) => {
+                if (unsubscribeFromFirestore) unsubscribeFromFirestore();
 
-            const initApp = () => {
-                $('#loading-screen').classList.add('hidden');
+                const docRef = doc(db, "users", userId);
                 
-                if (sessionStorage.getItem(LOGGED_IN_KEY) === 'true') {
-                    $('#login-screen').classList.add('hidden');
-                    $('main').classList.remove('hidden');
-                    
-                    if (!data.classes || data.classes.length === 0) {
+                unsubscribeFromFirestore = onSnapshot(docRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        data = docSnap.data();
+                        if (!data.classes) data.classes = [];
+                    } else {
+                        console.log("A criar novo documento para o utilizador.");
+                        data = JSON.parse(JSON.stringify(defaultData));
                         const newClass = createNewClass("Turma");
-                        data.classes = [newClass];
-                        activeClassId = newClass.id;
-                        data.activeClassId = activeClassId;
-                        saveData(true);
+                        data.classes.push(newClass);
+                        data.activeClassId = newClass.id;
+                        setDoc(docRef, data); // Guarda os dados iniciais
                     }
+                    
                     activeClassId = data.activeClassId || (data.classes && data.classes[0]?.id);
                     $('#attendanceDate').valueAsDate = new Date();
                     updateClassSelector();
                     renderAll();
                     setInterval(() => $('#currentTime').textContent = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), 1000 * 60);
 
-                } else {
-                    $('#login-screen').classList.remove('hidden');
-                    $('main').classList.add('hidden');
-                }
-            };
-            
-            const loadData = (userId) => {
-                if (unsubscribeFromFirestore) {
-                    unsubscribeFromFirestore();
-                }
-
-                const docRef = doc(db, "users", userId);
-                
-                unsubscribeFromFirestore = onSnapshot(docRef, (docSnap) => {
-                    if (docSnap.exists()) {
-                        console.log("Dados recebidos do Firestore.");
-                        data = docSnap.data();
-                        if (!data.classes) data.classes = [];
-                    } else {
-                        console.log("Nenhum documento encontrado, a criar um novo com dados padrão.");
-                        data = JSON.parse(JSON.stringify(defaultData));
-                        setDoc(docRef, data);
-                    }
-                    initApp();
                 }, (error) => {
                     console.error("Erro ao ouvir dados do Firestore:", error);
-                    $('#loading-screen').innerHTML = '<p>Não foi possível carregar os dados. Verifique as suas regras de segurança no Firebase.</p>';
+                    $('#loading-message').textContent = 'Não foi possível carregar os dados. Verifique as suas regras de segurança no Firebase.';
                 });
             };
 
             const saveData = (immediate = false) => {
-                if (!auth.currentUser) {
-                    console.error("Tentativa de guardar dados sem utilizador autenticado.");
-                    showToast("Erro: Sem autenticação.", 'error');
-                    return;
-                }
+                if (!auth.currentUser) return;
 
                 clearTimeout(debounceTimeout);
                 const saveAction = async () => {
@@ -399,7 +365,6 @@
                         const userId = auth.currentUser.uid;
                         const docRef = doc(db, "users", userId);
                         await setDoc(docRef, data, { merge: true });
-                        // showToast("Alterações guardadas na nuvem"); // Mensagem removida a pedido do utilizador
                     } catch (e) {
                         showToast("Erro ao guardar dados.", 'error');
                         console.error("Erro ao guardar dados no Firestore:", e);
@@ -446,7 +411,7 @@
 
             const renderClassDetails = () => {
                 const cls = getActiveClass();
-                if (!cls) return;
+                if (!cls || !cls.details) return;
                 $('#class-details').innerHTML = `
                     <span>Professor(a): <span contenteditable="true" data-detail="teacher" class="p-1 rounded-md">${cls.details.teacher || ''}</span></span>
                     <span>Sala: <span contenteditable="true" data-detail="room" class="p-1 rounded-md">${cls.details.room || ''}</span></span>
@@ -568,7 +533,13 @@
             };
             
             const setupEventListeners = () => {
+                // Auth listeners
                 $('#login-form').addEventListener('submit', handleLogin);
+                $('#register-form').addEventListener('submit', handleRegister);
+                $('#google-signin-btn').addEventListener('click', handleGoogleLogin);
+                $('#tab-login').addEventListener('click', () => switchTab('login'));
+                $('#tab-register').addEventListener('click', () => switchTab('register'));
+
                 $('#logout-btn').addEventListener('click', handleLogout);
                 $('#attendanceDate').addEventListener('change', renderAll);
                 $('#class-selector').addEventListener('change', (e) => { activeClassId = e.target.value; renderAll(); saveData(true); });
@@ -617,61 +588,65 @@
                 $$('.modal-backdrop').forEach(m => m.addEventListener('click', e => e.target === m && closeAllModals()));
                 $('#pasteListBtn').addEventListener('click', () => openModal('#pasteModal'));
                 $('#confirmPasteButton').addEventListener('click', handlePasteList);
-                $('#saveSettingsBtn').addEventListener('click', handleSaveSettings);
                 $('#addClassBtn').addEventListener('click', handleAddClass);
                 $('#manageClassesModal').addEventListener('click', handleManageClassesClick);
-                $('#saveForcedPasswordBtn').addEventListener('click', handleSaveForcedPassword);
-                
-                $('main').addEventListener('paste', (e) => {
-                    if (e.target.matches('[contenteditable="true"]')) {
-                        e.preventDefault();
-                        const text = e.clipboardData.getData('text/plain');
-                        document.execCommand('insertText', false, text);
-                    }
-                });
-                $('#togglePassword').addEventListener('click', () => {
-                    const isPassword = $('#password').type === 'password';
-                    $('#password').type = isPassword ? 'text' : 'password';
-                    $('#eye-open-icon').classList.toggle('hidden', isPassword);
-                    $('#eye-closed-icon').classList.toggle('hidden', !isPassword);
-                });
             };
 
-            const handleTitleEdit = (e) => {
-                const newName = e.target.textContent.trim();
-                const cls = getActiveClass();
-                if (newName && cls && cls.name !== newName) {
-                    cls.name = newName;
-                    updateClassSelector();
-                    saveData(true);
-                } else if (cls) {
-                    e.target.textContent = cls.name;
+            const switchTab = (tabName) => {
+                if (tabName === 'login') {
+                    $('#tab-login').classList.add('active');
+                    $('#tab-register').classList.remove('active');
+                    $('#login-form').classList.remove('hidden');
+                    $('#register-form').classList.add('hidden');
+                } else {
+                    $('#tab-login').classList.remove('active');
+                    $('#tab-register').classList.add('active');
+                    $('#login-form').classList.add('hidden');
+                    $('#register-form').classList.remove('hidden');
+                }
+                $('#auth-error').textContent = '';
+            };
+
+            const handleRegister = async (e) => {
+                e.preventDefault();
+                const email = $('#register-email').value;
+                const password = $('#register-password').value;
+                $('#auth-error').textContent = '';
+                try {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                } catch (error) {
+                    $('#auth-error').textContent = "Erro ao registar: " + error.message;
+                    console.error("Register Error:", error);
                 }
             };
 
-            const handleLogin = (e) => {
+            const handleLogin = async (e) => {
                 e.preventDefault();
-                $('#login-error').textContent = '';
-                const passwordInput = $('#password').value;
-                if (passwordInput === data.password) {
-                    if (data.firstLogin && data.password === DEFAULT_PASSWORD) {
-                        openModal('#forcePasswordChangeModal');
-                    } else {
-                        sessionStorage.setItem(LOGGED_IN_KEY, 'true');
-                        initApp();
-                    }
-                } else {
-                    $('#login-error').textContent = 'Palavra-passe incorreta.';
-                    $('#login-form').classList.add('animate-shake');
-                    setTimeout(() => $('#login-form').classList.remove('animate-shake'), 500);
+                const email = $('#login-email').value;
+                const password = $('#login-password').value;
+                $('#auth-error').textContent = '';
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                } catch (error) {
+                     $('#auth-error').textContent = "Erro ao entrar: " + error.message;
+                     console.error("Login Error:", error);
+                }
+            };
+            
+            const handleGoogleLogin = async () => {
+                const provider = new GoogleAuthProvider();
+                $('#auth-error').textContent = '';
+                try {
+                    await signInWithPopup(auth, provider);
+                } catch (error) {
+                     $('#auth-error').textContent = "Erro com o Google: " + error.message;
+                     console.error("Google Sign-In Error:", error);
                 }
             };
 
             const handleLogout = () => {
-                showConfirmationModal('Sair da Aplicação', 'Tem a certeza de que deseja sair?', () => {
-                    sessionStorage.removeItem(LOGGED_IN_KEY);
-                    $('main').classList.add('hidden');
-                    $('#login-screen').classList.remove('hidden');
+                showConfirmationModal('Sair da Aplicação', 'Tem a certeza de que deseja sair?', async () => {
+                    await signOut(auth);
                 });
             };
 
@@ -790,39 +765,16 @@
                 showToast(`${addedCount} alunos adicionados.`);
             };
             
-            const handleSaveSettings = () => {
-                const btn = $('#saveSettingsBtn');
-                toggleButtonLoading(btn, true);
-                const newPassword = $('#newPassword').value;
-                if (newPassword) {
-                    if (newPassword.length < 4) {
-                        showToast("A nova palavra-passe deve ter pelo menos 4 caracteres.", 'error');
-                        toggleButtonLoading(btn, false);
-                        return;
-                    }
-                    data.password = newPassword;
-                    $('#newPassword').value = "";
-                    showToast("Palavra-passe alterada com sucesso!");
-                }
-                setTimeout(() => {
+            const handleTitleEdit = (e) => {
+                const newName = e.target.textContent.trim();
+                const cls = getActiveClass();
+                if (newName && cls && cls.name !== newName) {
+                    cls.name = newName;
+                    updateClassSelector();
                     saveData(true);
-                    closeAllModals();
-                    toggleButtonLoading(btn, false);
-                }, 500);
-            };
-            
-            const handleSaveForcedPassword = () => {
-                const newPassword = $('#forceNewPassword').value;
-                if (newPassword.length < 4) {
-                    $('#force-password-error').textContent = "A palavra-passe deve ter pelo menos 4 caracteres.";
-                    return;
+                } else if (cls) {
+                    e.target.textContent = cls.name;
                 }
-                data.password = newPassword;
-                data.firstLogin = false;
-                saveData(true);
-                closeAllModals();
-                sessionStorage.setItem(LOGGED_IN_KEY, 'true');
-                initApp();
             };
 
             const handleExportPdf = () => {
