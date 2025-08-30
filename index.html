@@ -262,7 +262,7 @@
     <script type="module">
         // Importações dos módulos do Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- CONFIGURAÇÃO DO FIREBASE ---
@@ -270,9 +270,10 @@
             apiKey: "AIzaSyC3AEz-7J7NEVhfAzWDEkXauEm71iE-fFk",
             authDomain: "gerirturma.firebaseapp.com",
             projectId: "gerirturma",
-            storageBucket: "gerirturma.appspot.com",
+            storageBucket: "gerirturma.firebasestorage.app",
             messagingSenderId: "938833149464",
-            appId: "1:938833149464:web:2fec1f9e1e8074df8fcd6d"
+            appId: "1:938833149464:web:2fec1f9e1e8074df8fcd6d",
+            measurementId: "G-PW58Z8K64J"
         };
 
         // --- INICIALIZAÇÃO DO FIREBASE ---
@@ -314,16 +315,12 @@
                         console.log("Utilizador autenticado:", user.uid);
                         loadData(user.uid);
                     } else {
-                        console.log("Nenhum utilizador autenticado, a tentar login...");
+                        console.log("Nenhum utilizador autenticado, a tentar login anónimo...");
                         try {
-                            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                                await signInWithCustomToken(auth, __initial_auth_token);
-                            } else {
-                                await signInAnonymously(auth);
-                            }
+                            await signInAnonymously(auth);
                         } catch (error) {
-                            console.error("Falha no login anónimo/token:", error);
-                            $('#loading-screen').innerHTML = '<p>Erro de autenticação. Por favor, atualize a página.</p>';
+                            console.error("Falha no login anónimo:", error);
+                            $('#loading-screen').innerHTML = '<p>Erro de autenticação. Por favor, verifique se o login anónimo está ativo na consola do Firebase e atualize a página.</p>';
                         }
                     }
                 });
@@ -337,7 +334,7 @@
                     $('main').classList.remove('hidden');
                     
                     if (!data.classes || data.classes.length === 0) {
-                        const newClass = createNewClass("Minha Primeira Turma");
+                        const newClass = createNewClass("Turma");
                         data.classes = [newClass];
                         activeClassId = newClass.id;
                         data.activeClassId = activeClassId;
@@ -1069,27 +1066,4 @@
     </script>
 </body>
 </html>
-```
-
-### Ação Necessária da Sua Parte (MUITO IMPORTANTE):
-
-Para garantir que a aplicação funcione, por favor, siga estes dois passos:
-
-1.  **Atualize o `appId` no Ficheiro:**
-    * No código acima, na secção `<script type="module">`, localize a `firebaseConfig`.
-    * Substitua a linha `appId: "PREENCHA_COM_SEU_APP_ID"` pelo `appId` correto do seu projeto: `1:938833149464:web:2fec1f9e1e8074df8fcd6d`.
-
-2.  **Verifique as Regras de Segurança:**
-    * Vá à sua consola Firebase em **Firestore Database -> Rules**.
-    * Confirme que as regras são **exatamente** estas:
-        ```
-        rules_version = '2';
-        service cloud.firestore {
-          match /databases/{database}/documents {
-            match /users/{userId} {
-              allow read, write: if request.auth != null && request.auth.uid == userId;
-            }
-          }
-        }
-        
 
