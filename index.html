@@ -256,6 +256,15 @@
             </div>
         </div>
     </div>
+    <div id="reportsModal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[60]">
+         <div class="modal-content bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 w-full max-w-4xl">
+            <h3 class="text-lg font-bold mb-4">Relatório de Assiduidade da Turma</h3>
+            <div id="reports-content" class="max-h-[70vh] overflow-y-auto"></div>
+            <div class="flex justify-end gap-4 mt-6">
+                <button class="modal-close-btn bg-gray-200 dark:bg-gray-600 py-2 px-4 rounded-md">Fechar</button>
+            </div>
+        </div>
+    </div>
     
     <div id="toast" class="toast fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-800 text-white py-2 px-5 rounded-full shadow-lg z-[70]"></div>
 
@@ -459,7 +468,7 @@
                                 <td class="px-2 py-4 sm:p-4 font-medium"><span contenteditable="true" class="edit-name p-1 rounded-md">${student.name}</span></td>
                                 <td class="px-2 py-4 sm:p-4 text-center"><span class="status-indicator font-semibold px-3 py-1 rounded-full text-sm">--</span></td>
                                 <td class="px-2 py-4 sm:p-4 text-center">
-                                    <div class="flex flex-row items-center justify-center gap-1">
+                                    <div class="flex flex-col sm:flex-row items-center justify-center gap-1">
                                         <button class="status-btn p-1 sm:p-2 rounded-full hover:bg-green-200 dark:hover:bg-green-700 ${status === STATUS_PRESENT ? 'active-P' : ''}" data-status="${STATUS_PRESENT}" title="Presente">P</button>
                                         <button class="status-btn p-1 sm:p-2 rounded-full hover:bg-red-200 dark:hover:bg-red-700 ${status === STATUS_ABSENT ? 'active-F' : ''}" data-status="${STATUS_ABSENT}" title="Falta">F</button>
                                         <button class="status-btn p-1 sm:p-2 rounded-full hover:bg-yellow-200 dark:hover:bg-yellow-700 ${status === STATUS_JUSTIFIED ? 'active-J' : ''}" data-status="${STATUS_JUSTIFIED}" title="Justificado">J</button>
@@ -592,6 +601,13 @@
                 $('#confirmPasteButton').addEventListener('click', handlePasteList);
                 $('#addClassBtn').addEventListener('click', handleAddClass);
                 $('#manageClassesModal').addEventListener('click', handleManageClassesClick);
+                
+                // Event delegation for reports modal
+                $('#reports-content').addEventListener('click', (e) => {
+                    if (e.target.matches('.export-student-report-btn')) {
+                        handleExportStudentReport(e);
+                    }
+                });
             };
 
             const switchTab = (tabName) => {
@@ -1028,21 +1044,4 @@
     </script>
 </body>
 </html>
-```
-
-### O que foi Corrigido:
-
-1.  **Erro de Autenticação (`auth/custom-token-mismatch`):** O código agora é mais inteligente. Se detetar que está a ser executado num ambiente de teste (como este onde estamos), usará o `__firebase_config` e o `__initial_auth_token` fornecidos por esse ambiente. Se for executado localmente (abrindo o ficheiro no seu navegador), ele usará a sua configuração `gerirturma` e tentará um login anónimo, que é perfeito para testes.
-
-Para garantir que tudo funcione, por favor, **verifique pela última vez as suas regras de segurança** no Firestore. Elas devem ser exatamente estas:
-
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-  }
-}
 
