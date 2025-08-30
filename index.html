@@ -85,16 +85,16 @@
         </div>
     </div>
 
-    <main class="container mx-auto p-4 md:p-8 max-w-4xl hidden">
-        <header class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-6 mb-8">
+    <main class="container mx-auto p-2 sm:p-4 md:p-8 max-w-4xl hidden">
+        <header class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-4 sm:p-6 mb-4 sm:mb-8">
             <div class="flex justify-between items-start">
-                <div>
-                    <h1 class="text-2xl md:text-3xl font-bold text-gray-700 dark:text-gray-100">
+                <div class="min-w-0">
+                    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-700 dark:text-gray-100">
                         <select id="class-selector" class="bg-transparent font-bold focus:outline-none p-1 -ml-1"></select>
                     </h1>
                     <div id="class-details" class="text-gray-500 dark:text-gray-400 mt-2 flex flex-wrap gap-x-4 gap-y-2 text-sm"></div>
                 </div>
-                <div class="flex items-center gap-2 flex-shrink-0">
+                <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                     <button id="reports-btn" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700" title="Relatórios"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" x2="8" y1="13" y2="13"></line><line x1="16" x2="8" y1="17" y2="17"></line><line x1="10" x2="8" y1="9" y2="9"></line></svg></button>
                     <button id="settings-btn" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700" title="Definições"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
                     <button id="logout-btn" class="p-2 rounded-full text-gray-500 hover:bg-red-200 dark:hover:bg-red-700" title="Sair"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></button>
@@ -110,8 +110,8 @@
             </div>
         </header>
 
-        <div class="grid md:grid-cols-2 gap-8 mb-8">
-            <section class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-6">
+        <div class="grid md:grid-cols-2 gap-4 sm:gap-8 mb-4 sm:mb-8">
+            <section class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-4 sm:p-6">
                 <h2 class="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-100">Gerenciar Alunos</h2>
                 <div class="flex flex-col gap-4">
                     <div class="flex flex-col sm:flex-row items-center gap-4">
@@ -120,7 +120,7 @@
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Adicionar
                         </button>
                     </div>
-                    <div class="flex flex-wrap gap-2">
+                    <div class="flex flex-wrap gap-1 sm:gap-2">
                         <button id="manage-classes-btn" class="bg-purple-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-purple-600 flex items-center gap-2 text-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10.5V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h12.5"/><path d="m17 13 3 3-3 3"/><path d="M3 11h11"/><path d="M11 17H3"/></svg>Gerir Turmas</button>
                         <button id="pasteListBtn" class="bg-teal-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-teal-600 flex items-center gap-2 text-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2H8a2 2 0 0 0-2 2v2h8V4a2 2 0 0 0-2-2Z"/><path d="M16 4h2a2 2 0 0 1 2 2v4h-4V4Z"/><path d="M18 10h4v8a2 2 0 0 1-2 2h-2"/><path d="M6 10H2v8a2 2 0 0 0 2 2h2"/><rect width="8" height="8" x="8" y="12" rx="1"/></svg>Colar Lista</button>
                         <button id="deleteAllStudentsBtn" class="bg-red-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-red-700 flex items-center gap-2 text-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>Apagar Alunos</button>
@@ -128,9 +128,9 @@
                 </div>
             </section>
             
-            <section class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-6">
+            <section class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-4 sm:p-6">
                 <h2 class="text-xl font-semibold mb-4">Ações da Lista</h2>
-                <div class="flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-1 sm:gap-2">
                     <button id="markAllPresentBtn" class="bg-cyan-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-cyan-600 flex items-center gap-2 text-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 7 17l-5-5"></path><path d="m22 10-7.5 7.5L13 16"></path></svg>Marcar Todos P</button>
                     <button id="markAbsenteesBtn" class="bg-orange-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-orange-600 flex items-center gap-2 text-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg>Marcar Ausentes F</button>
                     <button id="clearAllBtn" class="bg-yellow-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-yellow-600 flex items-center gap-2 text-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21H7Z"/><path d="M22 21H7"/><path d="m5 12 5 5"/></svg>Limpar Marcações</button>
@@ -141,7 +141,7 @@
         </div>
 
         <section id="attendance-table-container" class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden">
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
                         <h2 class="text-xl font-semibold">Lista da Turma</h2>
@@ -152,20 +152,21 @@
                         <svg class="absolute left-2 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
                 </div>
-                <div id="attendance-summary" class="mt-4 flex flex-wrap gap-4 text-sm"></div>
+                <div id="attendance-summary" class="mt-4 flex flex-wrap gap-2 sm:gap-4 text-sm"></div>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full min-w-full text-left">
                     <thead class="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700">
                         <tr>
                             <th class="p-4 text-sm font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-300">ID</th>
-                            <th id="sort-by-name" class="sortable-header p-4 text-sm font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-300">Nome do Aluno</th>
-                            <th id="sort-by-status" class="sortable-header p-4 text-sm font-semibold uppercase tracking-wider text-center text-gray-600 dark:text-gray-300">Status</th>
+                            <th id="sort-by-name" class="sortable-header p-4 text-sm font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-300">Nome do Aluno <span></span></th>
+                            <th id="sort-by-status" class="sortable-header p-4 text-sm font-semibold uppercase tracking-wider text-center text-gray-600 dark:text-gray-300">Status <span></span></th>
                             <th class="p-4 text-sm font-semibold uppercase tracking-wider text-center text-gray-600 dark:text-gray-300">Ações</th>
                         </tr>
                     </thead>
                     <tbody id="studentList" class="divide-y divide-gray-200 dark:divide-gray-700">
-                           <tr id="empty-state" class="hidden"><td colspan="4" class="text-center p-8 text-gray-500"><p>Nenhum aluno cadastrado.</p></td></tr>
+                           <tr id="empty-state" class="hidden"><td colspan="4" class="text-center p-8 text-gray-500"><p>Nenhum aluno cadastrado. Adicione um aluno para começar.</p></td></tr>
+                           <tr id="empty-search-state" class="hidden"><td colspan="4" class="text-center p-8 text-gray-500"><p>Nenhum resultado encontrado para a sua pesquisa.</p></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -216,7 +217,7 @@
             <div class="space-y-4">
                 <div>
                     <label for="newPassword" class="block font-semibold mb-1">Alterar Senha</label>
-                    <input type="password" id="newPassword" class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600">
+                    <input type="password" id="newPassword" placeholder="Mínimo 4 caracteres" class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600">
                 </div>
                 <div>
                     <h4 class="font-semibold mb-2">Gestão de Dados</h4>
@@ -245,21 +246,24 @@
         </div>
     </div>
     
-    <div id="toast" class="toast fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-800 text-white py-2 px-5 rounded-full shadow-lg"></div>
+    <div id="toast" class="toast fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-800 text-white py-2 px-5 rounded-full shadow-lg z-[70]"></div>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- SELETORES DE ELEMENTOS ---
         const $ = (selector) => document.querySelector(selector);
         const $$ = (selector) => document.querySelectorAll(selector);
 
-        // --- ESTADO DA APLICAÇÃO ---
         let data = {};
         let activeClassId = null;
         let sortState = { key: 'name', asc: true };
         let debounceTimeout;
 
-        // --- INICIALIZAÇÃO ---
+        const defaultData = {
+            password: '1234',
+            classes: [],
+            activeClassId: null,
+        };
+
         const init = () => {
             loadData();
             checkLogin();
@@ -275,32 +279,26 @@
                 data.activeClassId = activeClassId;
             }
             activeClassId = data.activeClassId || data.classes[0]?.id;
+            $('#attendanceDate').valueAsDate = new Date();
             updateClassSelector();
             renderAll();
-            setInterval(updateDateTime, 1000 * 60);
-        };
-
-        // --- GESTÃO DE DADOS (localStorage) ---
-        const defaultData = {
-            password: '1234',
-            classes: [],
-            activeClassId: null,
+            setInterval(() => $('#currentTime').textContent = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), 1000 * 60);
         };
 
         const loadData = () => {
             try {
                 const storedData = localStorage.getItem('attendanceAppMultiClass');
                 data = storedData ? JSON.parse(storedData) : JSON.parse(JSON.stringify(defaultData));
-                if (!data.classes) data.classes = []; // Garante compatibilidade
+                if (!data.classes) data.classes = [];
             } catch (e) {
                 console.error("Erro ao carregar dados:", e);
                 data = JSON.parse(JSON.stringify(defaultData));
             }
         };
 
-        const saveData = () => {
+        const saveData = (immediate = false) => {
             clearTimeout(debounceTimeout);
-            debounceTimeout = setTimeout(() => {
+            const saveAction = () => {
                 try {
                     data.activeClassId = activeClassId;
                     localStorage.setItem('attendanceAppMultiClass', JSON.stringify(data));
@@ -309,10 +307,14 @@
                     showToast("Erro ao guardar dados.");
                     console.error("Erro ao guardar dados:", e);
                 }
-            }, 1000);
+            };
+            if (immediate) {
+                saveAction();
+            } else {
+                debounceTimeout = setTimeout(saveAction, 1000);
+            }
         };
 
-        // --- AUTENTICAÇÃO ---
         const checkLogin = () => {
             if (sessionStorage.getItem('isLoggedIn') === 'true') {
                 $('#login-screen').classList.add('hidden');
@@ -324,7 +326,6 @@
             }
         };
 
-        // --- LÓGICA DE TURMAS ---
         const getActiveClass = () => data.classes.find(c => c.id === activeClassId);
 
         const createNewClass = (name) => ({
@@ -335,16 +336,11 @@
             history: {}
         });
 
-        // --- LÓGICA DE RENDERIZAÇÃO ---
         const renderAll = () => {
-            if (!getActiveClass()) {
-                if(data.classes.length > 0) {
-                    activeClassId = data.classes[0].id;
-                } else {
-                    // Lida com o caso de não haver turmas
-                    renderEmptyState();
-                    return;
-                }
+            const cls = getActiveClass();
+            if (!cls) {
+                renderEmptyState();
+                return;
             }
             renderClassDetails();
             renderStudentList();
@@ -352,42 +348,39 @@
         };
 
         const renderEmptyState = () => {
-             $('#class-details').innerHTML = "Nenhuma turma encontrada. Crie uma em 'Gerir Turmas'.";
-             $('#studentList').innerHTML = `<tr><td colspan="4" class="text-center p-8 text-gray-500">Por favor, selecione ou crie uma turma.</td></tr>`;
-             updateAttendanceSummary();
+            $('#class-details').innerHTML = "Nenhuma turma encontrada. Crie uma em 'Gerir Turmas'.";
+            $('#studentList').innerHTML = `<tr><td colspan="4" class="text-center p-8 text-gray-500">Por favor, selecione ou crie uma turma.</td></tr>`;
+            $('#attendance-summary').innerHTML = '';
+             $('#empty-state').classList.add('hidden');
+             $('#empty-search-state').classList.add('hidden');
         };
 
         const renderClassDetails = () => {
             const cls = getActiveClass();
             if (!cls) return;
             $('#class-details').innerHTML = `
-                <span>Professor(a): <span contenteditable="true" data-detail="teacher">${cls.details.teacher}</span></span>
-                <span>Sala: <span contenteditable="true" data-detail="room">${cls.details.room}</span></span>
-                <span>Turno: <span contenteditable="true" data-detail="shift">${cls.details.shift}</span></span>
-                <span>Bimestre: <span contenteditable="true" data-detail="bimester">${cls.details.bimester}</span></span>
-            `;
+                <span>Professor(a): <span contenteditable="true" data-detail="teacher" class="p-1 rounded-md">${cls.details.teacher}</span></span>
+                <span>Sala: <span contenteditable="true" data-detail="room" class="p-1 rounded-md">${cls.details.room}</span></span>
+                <span>Turno: <span contenteditable="true" data-detail="shift" class="p-1 rounded-md">${cls.details.shift}</span></span>
+                <span>Bimestre: <span contenteditable="true" data-detail="bimester" class="p-1 rounded-md">${cls.details.bimester}</span></span>`;
         };
 
         const renderStudentList = () => {
             const cls = getActiveClass();
-            if (!cls) return;
+            if (!cls) {
+                renderEmptyState();
+                return;
+            };
             
             const date = $('#attendanceDate').value;
             const dailyRecord = cls.history[date] || {};
             
-            // Ordenação
             const sortedStudents = [...cls.students].sort((a, b) => {
-                let valA, valB;
-                if (sortState.key === 'name') {
-                    valA = a.name.toLowerCase();
-                    valB = b.name.toLowerCase();
-                } else { // status
-                    valA = dailyRecord[a.id] || '';
-                    valB = dailyRecord[b.id] || '';
-                }
+                let valA = (sortState.key === 'name') ? a.name.toLowerCase() : (dailyRecord[a.id] || 'z'); // 'z' to sort empty last
+                let valB = (sortState.key === 'name') ? b.name.toLowerCase() : (dailyRecord[b.id] || 'z');
                 if (valA < valB) return sortState.asc ? -1 : 1;
                 if (valA > valB) return sortState.asc ? 1 : -1;
-                return 0;
+                return a.name.localeCompare(b.name);
             });
 
             $('#studentList').innerHTML = sortedStudents.map((student, index) => {
@@ -396,21 +389,22 @@
                     <tr data-id="${student.id}">
                         <td class="p-4 text-sm text-gray-500">${index + 1}</td>
                         <td class="p-4 font-medium"><span contenteditable="true" class="edit-name p-1 rounded-md">${student.name}</span></td>
-                        <td class="p-4 text-center">
-                             <span class="status-indicator font-semibold px-3 py-1 rounded-full text-sm">--</span>
-                        </td>
+                        <td class="p-4 text-center"><span class="status-indicator font-semibold px-3 py-1 rounded-full text-sm">--</span></td>
                         <td class="p-4 text-center space-x-1">
                             <button class="status-btn p-2 rounded-full hover:bg-green-200 dark:hover:bg-green-700 ${status === 'P' ? 'active-P' : ''}" data-status="P" title="Presente">P</button>
                             <button class="status-btn p-2 rounded-full hover:bg-red-200 dark:hover:bg-red-700 ${status === 'F' ? 'active-F' : ''}" data-status="F" title="Falta">F</button>
                             <button class="status-btn p-2 rounded-full hover:bg-yellow-200 dark:hover:bg-yellow-700 ${status === 'J' ? 'active-J' : ''}" data-status="J" title="Justificado">J</button>
                             <button class="delete-btn p-2 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-100 dark:hover:bg-gray-700" title="Apagar Aluno"><svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
                         </td>
-                    </tr>
-                `;
+                    </tr>`;
             }).join('');
+            
+            $$('.sortable-header span').forEach(s => s.textContent = '');
+            $(`#sort-by-${sortState.key} span`).textContent = sortState.asc ? '▲' : '▼';
+
             updateStatusIndicators();
             updateAttendanceSummary();
-            $('#empty-state').classList.toggle('hidden', cls.students.length > 0);
+            handleSearch();
         };
         
         const updateStatusIndicators = () => {
@@ -419,10 +413,8 @@
             if(!cls) return;
             const dailyRecord = cls.history[date] || {};
 
-            $$('#studentList tr').forEach(row => {
-                const studentId = row.dataset.id;
-                if(!studentId) return;
-                const status = dailyRecord[studentId] || '';
+            $$('#studentList tr[data-id]').forEach(row => {
+                const status = dailyRecord[row.dataset.id] || '';
                 const indicator = row.querySelector('.status-indicator');
                 const statusInfo = {
                     'P': { text: 'Presente', bg: 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300' },
@@ -437,7 +429,8 @@
 
         const updateAttendanceSummary = () => {
              const cls = getActiveClass();
-             const total = cls ? cls.students.length : 0;
+             if (!cls) return;
+             const total = cls.students.length;
              if(total === 0) {
                  $('#attendance-summary').innerHTML = '';
                  return;
@@ -462,15 +455,11 @@
         };
         
         const updateClassSelector = () => {
-            $('#class-selector').innerHTML = data.classes.map(c => `<option value="${c.id}" ${c.id === activeClassId ? 'selected' : ''}>${c.name}</option>`).join('');
-            if (data.classes.length === 0) {
-                 $('#class-selector').innerHTML = `<option>Nenhuma turma</option>`;
-            }
+            $('#class-selector').innerHTML = data.classes.map(c => `<option value="${c.id}" ${c.id === activeClassId ? 'selected' : ''}>${c.name}</option>`).join('') 
+                || `<option>Nenhuma turma</option>`;
         };
 
-        // --- GESTORES DE EVENTOS ---
         const setupEventListeners = () => {
-            // Login
             $('#login-form').addEventListener('submit', handleLogin);
             $('#togglePassword').addEventListener('click', () => {
                 const isPassword = $('#password').type === 'password';
@@ -479,65 +468,38 @@
                 $('#eye-closed-icon').classList.toggle('hidden', !isPassword);
             });
             $('#logout-btn').addEventListener('click', handleLogout);
-            
-            // Turmas
-            $('#class-selector').addEventListener('change', (e) => {
-                activeClassId = e.target.value;
-                renderAll();
-                saveData();
-            });
+            $('#class-selector').addEventListener('change', (e) => { activeClassId = e.target.value; renderAll(); saveData(true); });
             $('main').addEventListener('input', (e) => {
                  if(e.target.matches('[contenteditable][data-detail]')) {
-                    const cls = getActiveClass();
-                    if(!cls) return;
-                    const detail = e.target.dataset.detail;
-                    cls.details[detail] = e.target.textContent;
+                    const cls = getActiveClass(); if(!cls) return;
+                    cls.details[e.target.dataset.detail] = e.target.textContent;
                     saveData();
                  }
             });
-
-            // Alunos
             $('#addStudentBtn').addEventListener('click', handleAddStudent);
             $('#studentName').addEventListener('keypress', (e) => e.key === 'Enter' && handleAddStudent(e));
             $('#studentList').addEventListener('click', handleStudentListClick);
             $('#studentList').addEventListener('input', (e) => {
                 if(e.target.matches('.edit-name')) {
-                    const studentId = e.target.closest('tr').dataset.id;
-                    const student = getActiveClass().students.find(s => s.id === studentId);
+                    const student = getActiveClass().students.find(s => s.id === e.target.closest('tr').dataset.id);
                     if(student) student.name = e.target.textContent;
                     saveData();
                 }
             });
             $('#deleteAllStudentsBtn').addEventListener('click', handleDeleteAllStudents);
-
-            // Ações da Lista
             $('#attendanceDate').addEventListener('change', renderAll);
             $('#markAllPresentBtn').addEventListener('click', () => updateAllStatuses('P'));
             $('#markAbsenteesBtn').addEventListener('click', handleMarkAbsentees);
             $('#clearAllBtn').addEventListener('click', () => updateAllStatuses(''));
-            $('#searchStudent').addEventListener('input', (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                 $$('#studentList tr').forEach(row => {
-                    const studentName = row.querySelector('.edit-name')?.textContent.toLowerCase() || '';
-                    row.classList.toggle('hidden', !studentName.includes(searchTerm));
-                });
-            });
-
-            // Ordenação
+            $('#searchStudent').addEventListener('input', handleSearch);
             $('#sort-by-name').addEventListener('click', () => handleSort('name'));
             $('#sort-by-status').addEventListener('click', () => handleSort('status'));
-
-            // Botões do Cabeçalho
             $('#settings-btn').addEventListener('click', () => openModal('#settingsModal'));
             $('#reports-btn').addEventListener('click', openReportsModal);
             $('#manage-classes-btn').addEventListener('click', openManageClassesModal);
-
-            // Exportação / Partilha
             $('#exportPdfBtn').addEventListener('click', handleExportPdf);
             $('#shareBtn').addEventListener('click', handleShare);
-            
-            // Modais
-            $$('.modal-close-btn').forEach(btn => btn.addEventListener('click', () => closeAllModals()));
+            $$('.modal-close-btn, #cancelButton').forEach(btn => btn.addEventListener('click', () => closeAllModals()));
             $('#pasteListBtn').addEventListener('click', () => openModal('#pasteModal'));
             $('#confirmPasteButton').addEventListener('click', handlePasteList);
             $('#saveSettingsBtn').addEventListener('click', handleSaveSettings);
@@ -545,9 +507,11 @@
             $('#importDataInput').addEventListener('change', handleImportData);
             $('#addClassBtn').addEventListener('click', handleAddClass);
             $('#manageClassesModal').addEventListener('click', handleManageClassesClick);
+            window.addEventListener('beforeunload', () => saveData(true));
+            document.addEventListener('keydown', (e) => e.key === "Escape" && closeAllModals());
+            $$('.modal-backdrop').forEach(m => m.addEventListener('click', e => e.target === m && closeAllModals()));
         };
 
-        // --- MANIPULADORES DE EVENTOS ---
         const handleLogin = (e) => {
             e.preventDefault();
             $('#login-error').textContent = '';
@@ -570,43 +534,38 @@
 
         const handleAddStudent = (e) => {
             e.preventDefault();
-            const cls = getActiveClass();
-            if (!cls) return;
+            const cls = getActiveClass(); if (!cls) return;
             const name = $('#studentName').value.trim();
             if (name) {
                 if (cls.students.some(s => s.name.toLowerCase() === name.toLowerCase())) {
-                    showToast("Este aluno já existe na turma.");
-                    return;
+                    showToast("Este aluno já existe na turma."); return;
                 }
                 cls.students.push({ id: `student_${Date.now()}`, name });
                 $('#studentName').value = '';
-                renderStudentList();
-                saveData();
+                renderStudentList(); saveData(true);
                 showToast("Aluno adicionado.");
             }
         };
 
         const handleStudentListClick = (e) => {
-            const btn = e.target.closest('button');
-            if(!btn) return;
-
+            const btn = e.target.closest('button'); if(!btn) return;
             const studentId = btn.closest('tr').dataset.id;
-            const cls = getActiveClass();
+            const cls = getActiveClass(); if (!cls) return;
             const studentIndex = cls.students.findIndex(s => s.id === studentId);
-
+            
+            if (studentIndex === -1 && !btn.closest("#empty-state, #empty-search-state")) return; // Prevenção de erro
+            
             if (btn.classList.contains('status-btn')) {
                 const date = $('#attendanceDate').value;
                 if (!cls.history[date]) cls.history[date] = {};
                 const currentStatus = cls.history[date][studentId];
                 const newStatus = btn.dataset.status;
                 cls.history[date][studentId] = currentStatus === newStatus ? '' : newStatus;
-                renderStudentList();
-                saveData();
+                renderStudentList(); saveData(true);
             } else if (btn.classList.contains('delete-btn')) {
-                showConfirmationModal('Apagar Aluno', `Tem a certeza de que deseja apagar "${cls.students[studentIndex].name}"?`, () => {
+                 showConfirmationModal('Apagar Aluno', `Tem a certeza de que deseja apagar "${cls.students[studentIndex].name}"?`, () => {
                     cls.students.splice(studentIndex, 1);
-                    renderStudentList();
-                    saveData();
+                    renderStudentList(); saveData(true);
                     showToast('Aluno removido!');
                 });
             }
@@ -617,27 +576,21 @@
             if (!cls || cls.students.length === 0) return showToast("Não há alunos para apagar.");
             showConfirmationModal('Apagar Todos os Alunos', 'Tem a certeza de que deseja apagar TODOS os alunos desta turma?', () => {
                 cls.students = [];
-                renderStudentList();
-                saveData();
+                renderStudentList(); saveData(true);
                 showToast('Todos os alunos foram apagados.');
             });
         };
         
         const updateAllStatuses = (status) => {
-            const cls = getActiveClass();
-            if (!cls) return;
+            const cls = getActiveClass(); if (!cls) return;
             const date = $('#attendanceDate').value;
             if (!cls.history[date]) cls.history[date] = {};
-            cls.students.forEach(student => {
-                cls.history[date][student.id] = status;
-            });
-            renderStudentList();
-            saveData();
+            cls.students.forEach(student => { cls.history[date][student.id] = status; });
+            renderStudentList(); saveData(true);
         };
 
         const handleMarkAbsentees = () => {
-             const cls = getActiveClass();
-             if (!cls) return;
+             const cls = getActiveClass(); if (!cls) return;
              const date = $('#attendanceDate').value;
              if (!cls.history[date]) cls.history[date] = {};
              let markedCount = 0;
@@ -648,8 +601,7 @@
                  }
              });
              if (markedCount > 0) {
-                renderStudentList();
-                saveData();
+                renderStudentList(); saveData(true);
                 showToast(`${markedCount} aluno(s) ausente(s) marcado(s) com falta.`);
              } else {
                 showToast("Nenhum aluno ausente para marcar.");
@@ -665,10 +617,28 @@
             }
             renderStudentList();
         };
+
+        const handleSearch = () => {
+            const searchTerm = $('#searchStudent').value.toLowerCase();
+            const cls = getActiveClass();
+            let resultsFound = false;
+            
+            if (!cls) return;
+
+            $$('#studentList tr[data-id]').forEach(row => {
+                const studentName = row.querySelector('.edit-name')?.textContent.toLowerCase() || '';
+                const isVisible = studentName.includes(searchTerm);
+                row.classList.toggle('hidden', !isVisible);
+                if (isVisible) resultsFound = true;
+            });
+
+            const hasStudents = cls.students.length > 0;
+            $('#empty-state').classList.toggle('hidden', hasStudents || searchTerm !== '');
+            $('#empty-search-state').classList.toggle('hidden', resultsFound || !hasStudents || searchTerm === '');
+        };
         
         const handlePasteList = () => {
-            const cls = getActiveClass();
-            if (!cls) return;
+            const cls = getActiveClass(); if (!cls) return;
             const names = $('#pasteTextarea').value.trim().split('\n').map(name => name.trim()).filter(Boolean);
             const existingNames = new Set(cls.students.map(s => s.name.toLowerCase()));
             let addedCount = 0;
@@ -678,8 +648,7 @@
                     addedCount++;
                 }
             });
-            renderStudentList();
-            saveData();
+            renderStudentList(); saveData(true);
             closeAllModals();
             showToast(`${addedCount} alunos adicionados.`);
         };
@@ -688,19 +657,18 @@
             const newPassword = $('#newPassword').value;
             if (newPassword) {
                 if (newPassword.length < 4) {
-                    showToast("A nova senha deve ter pelo menos 4 caracteres.");
-                    return;
+                    showToast("A nova senha deve ter pelo menos 4 caracteres."); return;
                 }
                 data.password = newPassword;
                 $('#newPassword').value = "";
                 showToast("Senha alterada com sucesso!");
             }
-            saveData();
+            saveData(true);
             closeAllModals();
         };
 
         const handleExportData = () => {
-            const dataStr = JSON.stringify(data);
+            const dataStr = JSON.stringify(data, null, 2);
             const blob = new Blob([dataStr], {type: "application/json"});
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -712,8 +680,7 @@
         };
 
         const handleImportData = (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
+            const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
@@ -722,15 +689,11 @@
                         showConfirmationModal("Importar Backup", "Isto substituirá todos os dados atuais. Deseja continuar?", () => {
                             data = importedData;
                             activeClassId = data.activeClassId || data.classes[0]?.id;
-                            saveData();
-                            location.reload(); // Recarrega para aplicar todas as mudanças
+                            saveData(true);
+                            location.reload();
                         });
-                    } else {
-                        showToast("Ficheiro de backup inválido.");
-                    }
-                } catch (error) {
-                    showToast("Erro ao ler o ficheiro de backup.");
-                }
+                    } else { showToast("Ficheiro de backup inválido."); }
+                } catch (error) { showToast("Erro ao ler o ficheiro de backup."); }
             };
             reader.readAsText(file);
         };
@@ -738,21 +701,27 @@
         const handleAddClass = () => {
             const name = $('#newClassName').value.trim();
             if (name) {
-                data.classes.push(createNewClass(name));
+                const newClass = createNewClass(name);
+                data.classes.push(newClass);
+                activeClassId = newClass.id;
                 $('#newClassName').value = '';
                 renderManageClassesList();
                 updateClassSelector();
-                saveData();
+                renderAll();
+                saveData(true);
             }
         };
 
         const handleManageClassesClick = (e) => {
-            const btn = e.target.closest('button');
-            if (!btn) return;
+            const btn = e.target.closest('button'); if (!btn) return;
             const classId = btn.closest('[data-id]').dataset.id;
             const classIndex = data.classes.findIndex(c => c.id === classId);
 
             if (btn.classList.contains('delete-class-btn')) {
+                if (data.classes.length === 1) {
+                    showToast("Não pode apagar a única turma existente.");
+                    return;
+                }
                 showConfirmationModal("Apagar Turma", "Tem a certeza? Todos os alunos e o histórico de presenças desta turma serão apagados permanentemente.", () => {
                     data.classes.splice(classIndex, 1);
                     if (activeClassId === classId) {
@@ -761,7 +730,7 @@
                     renderManageClassesList();
                     updateClassSelector();
                     renderAll();
-                    saveData();
+                    saveData(true);
                 });
             } else if (btn.classList.contains('edit-class-btn')) {
                 const newName = prompt("Novo nome para a turma:", data.classes[classIndex].name);
@@ -769,15 +738,13 @@
                     data.classes[classIndex].name = newName.trim();
                     renderManageClassesList();
                     updateClassSelector();
-                    saveData();
+                    saveData(true);
                 }
             }
         };
         
-        // --- LÓGICA DE EXPORTAÇÃO E PARTILHA ---
         const handleExportPdf = () => {
-            const cls = getActiveClass();
-            if (!cls) return;
+            const cls = getActiveClass(); if (!cls) return;
             const date = $('#attendanceDate').value;
             const dailyRecord = cls.history[date] || {};
 
@@ -786,8 +753,7 @@
                     <td style="padding: 8px;">${index + 1}</td>
                     <td style="padding: 8px; font-weight: 500;">${student.name}</td>
                     <td style="padding: 8px; text-align: center;">${dailyRecord[student.id] || '--'}</td>
-                </tr>
-            `).join('');
+                </tr>`).join('');
 
             const content = `
                 <div style="font-family: 'Inter', sans-serif; padding: 20px; color: #000; font-size: 12px;">
@@ -799,11 +765,7 @@
                      </div>
                     <table style="width: 100%; border-collapse: collapse;">
                         <thead style="background-color: #f7fafc;">
-                            <tr>
-                                <th style="padding: 8px; text-align: left;">ID</th>
-                                <th style="padding: 8px; text-align: left;">Nome</th>
-                                <th style="padding: 8px; text-align: center;">Status</th>
-                            </tr>
+                            <tr><th style="padding: 8px; text-align: left;">ID</th><th style="padding: 8px; text-align: left;">Nome</th><th style="padding: 8px; text-align: center;">Status</th></tr>
                         </thead>
                         <tbody>${studentRows}</tbody>
                     </table>
@@ -818,8 +780,7 @@
         };
 
         const handleShare = async () => {
-            const cls = getActiveClass();
-            if (!cls) return;
+            const cls = getActiveClass(); if (!cls) return;
             const date = $('#attendanceDate').value;
             const dailyRecord = cls.history[date] || {};
             const studentNames = cls.students.map((s, i) => `${i + 1}. ${s.name} (${dailyRecord[s.id] || 'Não marcado'})`).join('\n');
@@ -832,8 +793,17 @@
                 showToast('Partilha não suportada.');
             }
         };
+        
+        const showConfirmationModal = (title, message, onConfirm) => {
+            $('#modalTitle').textContent = title;
+            $('#modalMessage').textContent = message;
+            const confirmHandler = () => { onConfirm(); closeAllModals(); };
+            const cancelHandler = () => closeAllModals();
+            $('#confirmButton').onclick = confirmHandler;
+            $('#cancelButton').onclick = cancelHandler;
+            openModal('#confirmationModal');
+        };
 
-        // --- GESTÃO DE MODAIS ---
         const openModal = (selector) => $(selector).classList.add('active');
         const closeAllModals = () => $$('.modal-backdrop').forEach(m => m.classList.remove('active'));
 
@@ -845,23 +815,21 @@
         const renderManageClassesList = () => {
             $('#classList').innerHTML = data.classes.map(c => `
                 <div data-id="${c.id}" class="flex items-center justify-between p-2 border rounded-md dark:border-gray-600">
-                    <span>${c.name}</span>
-                    <div>
-                        <button class="edit-class-btn p-1">✏️</button>
-                        <button class="delete-class-btn p-1">🗑️</button>
+                    <span class="truncate pr-2">${c.name}</span>
+                    <div class="flex-shrink-0">
+                        <button class="edit-class-btn p-1 text-blue-500 hover:text-blue-700">✏️</button>
+                        <button class="delete-class-btn p-1 text-red-500 hover:text-red-700">🗑️</button>
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
         };
         
         const openReportsModal = () => {
             const cls = getActiveClass();
             if (!cls || cls.students.length === 0) {
-                showToast("Não há alunos na turma para gerar relatório.");
-                return;
+                showToast("Não há alunos na turma para gerar relatório."); return;
             }
             
-            const stats = {}; // { studentId: { P: 0, F: 0, J: 0, total: 0 } }
+            const stats = {};
             cls.students.forEach(s => stats[s.id] = { P: 0, F: 0, J: 0, total: 0 });
 
             Object.values(cls.history).forEach(dailyRecord => {
@@ -876,26 +844,18 @@
             $('#reports-content').innerHTML = `
                 <table class="w-full text-left text-sm">
                     <thead class="bg-gray-50 dark:bg-gray-700/50"><tr>
-                        <th class="p-2">Aluno</th>
-                        <th class="p-2 text-center">Presente</th>
-                        <th class="p-2 text-center">Falta</th>
-                        <th class="p-2 text-center">Justificado</th>
-                        <th class="p-2 text-center">Aproveitamento</th>
-                        <th class="p-2 text-center">Ações</th>
+                        <th class="p-2">Aluno</th><th class="p-2 text-center">Presente</th><th class="p-2 text-center">Falta</th>
+                        <th class="p-2 text-center">Justificado</th><th class="p-2 text-center">Aproveitamento</th><th class="p-2 text-center">Ações</th>
                     </tr></thead>
                     <tbody>
-                    ${cls.students.map(s => {
+                    ${cls.students.sort((a,b)=>a.name.localeCompare(b.name)).map(s => {
                         const s_stats = stats[s.id];
                         const attendanceRate = s_stats.total > 0 ? ((s_stats.P / s_stats.total) * 100).toFixed(0) : "N/A";
                         return `<tr class="border-b dark:border-gray-700">
-                            <td class="p-2 font-medium">${s.name}</td>
-                            <td class="p-2 text-center">${s_stats.P}</td>
-                            <td class="p-2 text-center">${s_stats.F}</td>
-                            <td class="p-2 text-center">${s_stats.J}</td>
+                            <td class="p-2 font-medium">${s.name}</td><td class="p-2 text-center">${s_stats.P}</td>
+                            <td class="p-2 text-center">${s_stats.F}</td><td class="p-2 text-center">${s_stats.J}</td>
                             <td class="p-2 text-center">${attendanceRate}%</td>
-                            <td class="p-2 text-center">
-                                <button data-id="${s.id}" class="export-student-report-btn text-blue-500">Exportar PDF</button>
-                            </td>
+                            <td class="p-2 text-center"><button data-id="${s.id}" class="export-student-report-btn text-blue-500">Exportar PDF</button></td>
                         </tr>`
                     }).join('')}
                     </tbody>
@@ -908,31 +868,23 @@
         const handleExportStudentReport = (e) => {
             const studentId = e.target.dataset.id;
             const cls = getActiveClass();
-            const student = cls.students.find(s => s.id === studentId);
-            if (!student) return;
+            const student = cls.students.find(s => s.id === studentId); if (!student) return;
 
-            let reportHtml = `<h2 style="font-size: 18px; font-weight: bold;">Relatório de Assiduidade</h2>
-            <p><strong>Aluno:</strong> ${student.name}</p>
-            <p><strong>Turma:</strong> ${cls.name}</p><br>
+            let reportHtml = `<div style="font-family: 'Inter', sans-serif; padding: 20px; color: #000; font-size: 12px;"><h2 style="font-size: 18px; font-weight: bold;">Relatório de Assiduidade</h2>
+            <p><strong>Aluno:</strong> ${student.name}</p><p><strong>Turma:</strong> ${cls.name}</p><br>
             <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-                <thead><tr><th style="padding: 5px; border-bottom: 1px solid #000; text-align: left;">Data</th><th style="padding: 5px; border-bottom: 1px solid #000; text-align: left;">Status</th></tr></thead>
-                <tbody>`;
+                <thead><tr><th style="padding: 5px; border-bottom: 1px solid #000; text-align: left;">Data</th><th style="padding: 5px; border-bottom: 1px solid #000; text-align: left;">Status</th></tr></thead><tbody>`;
 
             Object.entries(cls.history).sort().forEach(([date, dailyRecord]) => {
                 if(dailyRecord[studentId]) {
                     reportHtml += `<tr><td style="padding: 5px; border-bottom: 1px solid #ccc;">${new Date(date).toLocaleDateString('pt-BR', {timeZone:'UTC'})}</td><td style="padding: 5px; border-bottom: 1px solid #ccc;">${dailyRecord[studentId]}</td></tr>`;
                 }
             });
-            reportHtml += `</tbody></table>`;
+            reportHtml += `</tbody></table></div>`;
             
-            html2pdf().from(reportHtml).set({
-                filename: `Relatorio_${student.name}.pdf`,
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            }).save();
+            html2pdf().from(reportHtml).set({ filename: `Relatorio_${student.name}.pdf`, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } }).save();
         };
 
-
-        // --- TEMA ---
         const initTheme = () => {
             const preferredTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
             const isDark = preferredTheme === 'dark';
@@ -949,11 +901,9 @@
             $('#theme-toggle-light-icon').classList.toggle('hidden', !isDark);
         };
         
-        // --- INICIAR A APLICAÇÃO ---
         init();
     });
     </script>
 </body>
 </html>
-
 
