@@ -68,7 +68,7 @@
     <!-- Ecrã de Carregamento -->
     <div id="loading-screen" class="fixed inset-0 bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center p-4 z-[100]">
         <svg class="animate-spin h-10 w-10 text-blue-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-        <p class="text-gray-600 dark:text-gray-300">A ligar à base de dados...</p>
+        <p id="loading-message" class="text-gray-600 dark:text-gray-300">A ligar à base de dados...</p>
     </div>
 
     <!-- ECRÃ DE LOGIN -->
@@ -262,11 +262,11 @@
     <script type="module">
         // Importações dos módulos do Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- CONFIGURAÇÃO DO FIREBASE ---
-        const firebaseConfig = {
+        const firebaseConfigFromUser = {
             apiKey: "AIzaSyC3AEz-7J7NEVhfAzWDEkXauEm71iE-fFk",
             authDomain: "gerirturma.firebaseapp.com",
             projectId: "gerirturma",
@@ -275,6 +275,11 @@
             appId: "1:938833149464:web:2fec1f9e1e8074df8fcd6d",
             measurementId: "G-PW58Z8K64J"
         };
+        
+        // Usa a configuração do ambiente se disponível, senão, usa a configuração do utilizador
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config)
+            : firebaseConfigFromUser;
 
         // --- INICIALIZAÇÃO DO FIREBASE ---
         const app = initializeApp(firebaseConfig);
@@ -315,12 +320,16 @@
                         console.log("Utilizador autenticado:", user.uid);
                         loadData(user.uid);
                     } else {
-                        console.log("Nenhum utilizador autenticado, a tentar login anónimo...");
+                        console.log("Nenhum utilizador autenticado, a tentar login...");
                         try {
-                            await signInAnonymously(auth);
+                            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                                await signInWithCustomToken(auth, __initial_auth_token);
+                            } else {
+                                await signInAnonymously(auth);
+                            }
                         } catch (error) {
-                            console.error("Falha no login anónimo:", error);
-                            $('#loading-screen').innerHTML = '<p>Erro de autenticação. Por favor, verifique se o login anónimo está ativo na consola do Firebase e atualize a página.</p>';
+                            console.error("Falha no login anónimo/token:", error);
+                            $('#loading-message').textContent = 'Erro de autenticação. Verifique a consola para detalhes.';
                         }
                     }
                 });
@@ -390,7 +399,7 @@
                         const userId = auth.currentUser.uid;
                         const docRef = doc(db, "users", userId);
                         await setDoc(docRef, data, { merge: true });
-                        showToast("Alterações guardadas na nuvem");
+                        // showToast("Alterações guardadas na nuvem"); // Mensagem removida a pedido do utilizador
                     } catch (e) {
                         showToast("Erro ao guardar dados.", 'error');
                         console.error("Erro ao guardar dados no Firestore:", e);
