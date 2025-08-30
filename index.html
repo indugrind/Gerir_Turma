@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Lista de Presença</title>
+    <title>Sistema de Lista de Presença com Firebase</title>
     
     <link rel="icon" type="image/svg+xml" sizes="any" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%234299E1'/%3E%3Cpath fill='none' stroke='%23FFF' stroke-width='10' stroke-linecap='round' stroke-linejoin='round' d='M25 50 l20 20 l35 -35'/%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%234299E1'/%3E%3Cpath fill='none' stroke='%23FFF' stroke-width='10' stroke-linecap='round' stroke-linejoin='round' d='M25 50 l20 20 l35 -35'/%3E%3C/svg%3E">
@@ -65,16 +65,22 @@
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
 
-    <!-- TELA DE LOGIN -->
-    <div id="login-screen" class="fixed inset-0 bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-4 z-50">
+    <!-- Ecrã de Carregamento -->
+    <div id="loading-screen" class="fixed inset-0 bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center p-4 z-[100]">
+        <svg class="animate-spin h-10 w-10 text-blue-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        <p class="text-gray-600 dark:text-gray-300">A ligar à base de dados...</p>
+    </div>
+
+    <!-- ECRÃ DE LOGIN -->
+    <div id="login-screen" class="fixed inset-0 bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-4 z-50 hidden">
         <div class="w-full max-w-sm bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-8">
             <h2 class="text-2xl font-bold text-center text-gray-700 dark:text-gray-100 mb-2">Login da Lista</h2>
-            <p class="text-center text-gray-500 dark:text-gray-400 mb-6">Por favor, insira a senha para continuar.</p>
+            <p class="text-center text-gray-500 dark:text-gray-400 mb-6">Por favor, insira a palavra-passe para continuar.</p>
             <form id="login-form">
                 <div class="mb-4 relative">
-                    <label for="password" class="sr-only">Senha</label>
-                    <input type="password" id="password" placeholder="Senha" class="w-full py-2 px-3 pr-10 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
-                    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-700 dark:hover:text-gray-300" aria-label="Mostrar/Ocultar senha">
+                    <label for="password" class="sr-only">Palavra-passe</label>
+                    <input type="password" id="password" placeholder="Palavra-passe" class="w-full py-2 px-3 pr-10 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-700 dark:hover:text-gray-300" aria-label="Mostrar/Ocultar palavra-passe">
                         <svg id="eye-open-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                         <svg id="eye-closed-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
                     </button>
@@ -113,7 +119,7 @@
 
         <div class="grid md:grid-cols-2 gap-4 sm:gap-8 mb-4 sm:mb-8">
             <section class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-4 sm:p-6">
-                <h2 class="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-100">Gerenciar Alunos</h2>
+                <h2 class="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-100">Gerir Alunos</h2>
                 <div class="flex flex-col gap-4">
                     <div class="flex flex-col sm:flex-row items-center gap-4">
                         <input type="text" id="studentName" placeholder="Novo aluno" class="w-full flex-grow py-2 px-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600">
@@ -136,7 +142,7 @@
                     <button id="markAbsenteesBtn" class="bg-orange-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-orange-600 flex items-center gap-2 text-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg>Marcar Ausentes F</button>
                     <button id="clearAllBtn" class="bg-yellow-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-yellow-600 flex items-center gap-2 text-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21H7Z"/><path d="M22 21H7"/><path d="m5 12 5 5"/></svg>Limpar Marcações</button>
                     <button id="exportPdfBtn" class="bg-green-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-green-600 flex items-center gap-2 text-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M12 18v-6"></path><path d="m15 15-3 3-3-3"></path></svg>Baixar PDF</button>
-                    <button id="shareBtn" class="bg-indigo-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-indigo-600 flex items-center gap-2 text-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>Compartilhar</button>
+                    <button id="shareBtn" class="bg-indigo-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-indigo-600 flex items-center gap-2 text-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>Partilhar</button>
                 </div>
             </section>
         </div>
@@ -149,7 +155,7 @@
                         <p id="list-date-display" class="text-gray-500 dark:text-gray-400 mt-1 text-sm">Marcando presença para: </p>
                     </div>
                     <div class="relative w-full sm:w-auto">
-                        <input type="text" id="searchStudent" placeholder="Buscar aluno..." class="p-2 pl-8 border rounded-md w-full sm:w-auto text-sm dark:bg-gray-700 dark:border-gray-600">
+                        <input type="text" id="searchStudent" placeholder="Procurar aluno..." class="p-2 pl-8 border rounded-md w-full sm:w-auto text-sm dark:bg-gray-700 dark:border-gray-600">
                         <svg class="absolute left-2 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
                 </div>
@@ -169,7 +175,7 @@
                            <!-- O conteúdo será renderizado pelo JavaScript -->
                     </tbody>
                 </table>
-                <div id="empty-state" class="hidden text-center p-8 text-gray-500"><p>Nenhum aluno cadastrado. Adicione um aluno para começar.</p></div>
+                <div id="empty-state" class="hidden text-center p-8 text-gray-500"><p>Nenhum aluno registado. Adicione um aluno para começar.</p></div>
                 <div id="empty-search-state" class="hidden text-center p-8 text-gray-500"><p>Nenhum resultado encontrado para a sua pesquisa.</p></div>
             </div>
         </section>
@@ -218,19 +224,10 @@
             <h3 class="text-lg font-bold mb-4">Definições</h3>
             <div class="space-y-4">
                 <div>
-                    <label for="newPassword" class="block font-semibold mb-1">Alterar Senha</label>
+                    <label for="newPassword" class="block font-semibold mb-1">Alterar Palavra-passe</label>
                     <input type="password" id="newPassword" placeholder="Mínimo 4 caracteres" class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600">
                 </div>
-                <div>
-                    <h4 class="font-semibold mb-2">Gestão de Dados</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <button id="exportDataBtn" class="bg-green-500 text-white p-2 rounded-md text-sm">Exportar Backup</button>
-                        <label class="bg-yellow-500 text-white p-2 rounded-md text-sm cursor-pointer">
-                            <span>Importar Backup</span>
-                            <input type="file" id="importDataInput" class="hidden" accept=".json">
-                        </label>
-                    </div>
-                </div>
+                 <!-- A gestão de dados local foi removida, pois agora os dados estão no Firebase -->
             </div>
             <div class="flex justify-end gap-4 mt-6">
                  <button class="modal-close-btn bg-gray-200 dark:bg-gray-600 py-2 px-4 rounded-md">Cancelar</button>
@@ -241,11 +238,11 @@
     <div id="forcePasswordChangeModal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-[60]">
         <div class="modal-content bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 w-full max-w-md">
             <h3 class="text-lg font-bold mb-2">Segurança Inicial</h3>
-            <p class="text-gray-600 dark:text-gray-300 mb-4">Por segurança, por favor defina uma nova senha para a sua lista. A senha padrão "1234" foi usada.</p>
-            <input type="password" id="forceNewPassword" placeholder="Nova senha (mínimo 4 caracteres)" class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600">
+            <p class="text-gray-600 dark:text-gray-300 mb-4">Por segurança, por favor defina uma nova palavra-passe para a sua lista. A palavra-passe padrão "1234" foi usada.</p>
+            <input type="password" id="forceNewPassword" placeholder="Nova palavra-passe (mínimo 4 caracteres)" class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600">
             <p id="force-password-error" class="text-red-500 text-sm h-5 mt-1"></p>
             <div class="flex justify-end gap-4 mt-4">
-                 <button id="saveForcedPasswordBtn" class="bg-blue-500 text-white py-2 px-4 rounded-md w-full">Definir Nova Senha e Entrar</button>
+                 <button id="saveForcedPasswordBtn" class="bg-blue-500 text-white py-2 px-4 rounded-md w-full">Definir Nova Palavra-passe e Entrar</button>
             </div>
         </div>
     </div>
@@ -261,783 +258,822 @@
     
     <div id="toast" class="toast fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-800 text-white py-2 px-5 rounded-full shadow-lg z-[70]"></div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const $ = (selector) => document.querySelector(selector);
-        const $$ = (selector) => document.querySelectorAll(selector);
+    <!-- SCRIPTS DO FIREBASE -->
+    <script type="module">
+        // Importações dos módulos do Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- CONSTANTES ---
-        const APP_STORAGE_KEY = 'attendanceAppMultiClass_v2';
-        const LOGGED_IN_KEY = 'isLoggedIn_v2';
-        const DEFAULT_PASSWORD = '1234';
-        const STATUS_PRESENT = 'P';
-        const STATUS_ABSENT = 'F';
-        const STATUS_JUSTIFIED = 'J';
-        
-        // --- ESTADO DA APLICAÇÃO ---
-        let data = {};
-        let activeClassId = null;
-        let sortState = { key: 'name', asc: true };
-        let debounceTimeout;
+        // --- CONFIGURAÇÃO DO FIREBASE ---
+        // As variáveis __firebase_config e __initial_auth_token são injetadas pelo ambiente.
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config)
+            : {
+                // COLE A SUA CONFIGURAÇÃO DO FIREBASE AQUI se não estiver no ambiente
+                apiKey: "SUA_API_KEY",
+                authDomain: "SEU_AUTH_DOMAIN",
+                projectId: "SEU_PROJECT_ID",
+                storageBucket: "SEU_STORAGE_BUCKET",
+                messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+                appId: "SEU_APP_ID"
+            };
 
-        const defaultData = {
-            password: DEFAULT_PASSWORD,
-            classes: [],
-            activeClassId: null,
-            firstLogin: true,
-        };
+        // --- INICIALIZAÇÃO DO FIREBASE ---
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        const init = () => {
-            loadData();
-            checkLogin();
-            setupEventListeners();
-            initTheme();
-        };
+        // --- Referência ao App ID ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-        const initApp = () => {
-            if (data.classes.length === 0) {
-                const newClass = createNewClass("Minha Primeira Turma");
-                data.classes.push(newClass);
-                activeClassId = newClass.id;
-                data.activeClassId = activeClassId;
-            }
-            activeClassId = data.activeClassId || data.classes[0]?.id;
-            $('#attendanceDate').valueAsDate = new Date();
-            updateClassSelector();
-            renderAll();
-            setInterval(() => $('#currentTime').textContent = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), 1000 * 60);
-        };
+        document.addEventListener('DOMContentLoaded', () => {
+            const $ = (selector) => document.querySelector(selector);
+            const $$ = (selector) => document.querySelectorAll(selector);
 
-        const loadData = () => {
-            try {
-                const storedData = localStorage.getItem(APP_STORAGE_KEY);
-                data = storedData ? JSON.parse(storedData) : JSON.parse(JSON.stringify(defaultData));
-                if (!data.classes) data.classes = [];
-            } catch (e) {
-                console.error("Erro ao carregar dados:", e);
-                data = JSON.parse(JSON.stringify(defaultData));
-            }
-        };
+            // --- CONSTANTES ---
+            const LOGGED_IN_KEY = 'isLoggedIn_v2_firebase';
+            const DEFAULT_PASSWORD = '1234';
+            const STATUS_PRESENT = 'P';
+            const STATUS_ABSENT = 'F';
+            const STATUS_JUSTIFIED = 'J';
+            
+            // --- ESTADO DA APLICAÇÃO ---
+            let data = {}; // Os dados virão do Firestore
+            let activeClassId = null;
+            let sortState = { key: 'name', asc: true };
+            let debounceTimeout;
+            let unsubscribeFromFirestore = null; // Função para parar de ouvir as atualizações
 
-        const saveData = (immediate = false) => {
-            clearTimeout(debounceTimeout);
-            const saveAction = () => {
-                try {
-                    data.activeClassId = activeClassId;
-                    localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(data));
-                    showToast("Alterações guardadas");
-                } catch (e) {
-                    showToast("Erro ao guardar dados.", 'error');
-                    console.error("Erro ao guardar dados:", e);
+            const defaultData = {
+                password: DEFAULT_PASSWORD,
+                classes: [],
+                activeClassId: null,
+                firstLogin: true,
+            };
+
+            const init = () => {
+                initTheme();
+                setupEventListeners();
+                
+                // Monitoriza o estado de autenticação
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        // Utilizador está autenticado, vamos carregar os dados
+                        console.log("Utilizador autenticado:", user.uid);
+                        loadData(user.uid);
+                    } else {
+                        // Utilizador não está autenticado, tentamos fazer login anónimo ou com token
+                        console.log("Nenhum utilizador autenticado, a tentar login...");
+                        try {
+                            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                                await signInWithCustomToken(auth, __initial_auth_token);
+                            } else {
+                                await signInAnonymously(auth);
+                            }
+                        } catch (error) {
+                            console.error("Falha no login anónimo/token:", error);
+                            $('#loading-screen').innerHTML = '<p>Erro de autenticação. Por favor, atualize a página.</p>';
+                        }
+                    }
+                });
+            };
+
+            const initApp = () => {
+                // A app é inicializada quando os dados são carregados do Firestore
+                $('#loading-screen').classList.add('hidden');
+                
+                if (sessionStorage.getItem(LOGGED_IN_KEY) === 'true') {
+                    $('#login-screen').classList.add('hidden');
+                    $('main').classList.remove('hidden');
+                    
+                    if (data.classes.length === 0) {
+                        const newClass = createNewClass("Minha Primeira Turma");
+                        data.classes.push(newClass);
+                        activeClassId = newClass.id;
+                        data.activeClassId = activeClassId;
+                        saveData(true); // Guarda a nova turma inicial
+                    }
+                    activeClassId = data.activeClassId || data.classes[0]?.id;
+                    $('#attendanceDate').valueAsDate = new Date();
+                    updateClassSelector();
+                    renderAll();
+                    setInterval(() => $('#currentTime').textContent = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), 1000 * 60);
+
+                } else {
+                    $('#login-screen').classList.remove('hidden');
+                    $('main').classList.add('hidden');
                 }
             };
-            if (immediate) {
-                saveAction();
-            } else {
-                debounceTimeout = setTimeout(saveAction, 1000);
-            }
-        };
-
-        const checkLogin = () => {
-            if (sessionStorage.getItem(LOGGED_IN_KEY) === 'true') {
-                $('#login-screen').classList.add('hidden');
-                $('main').classList.remove('hidden');
-                initApp();
-            } else {
-                $('#login-screen').classList.remove('hidden');
-                $('main').classList.add('hidden');
-            }
-        };
-
-        const getActiveClass = () => data.classes.find(c => c.id === activeClassId);
-
-        const createNewClass = (name) => ({
-            id: `class_${Date.now()}`,
-            name,
-            details: { teacher: "Professor(a)", room: "N/A", shift: "N/A", bimester: "N/A" },
-            students: [],
-            history: {}
-        });
-
-        const renderAll = () => {
-            const cls = getActiveClass();
-            if (!cls) {
-                renderEmptyState();
-                return;
-            }
-            $('#class-title-header').textContent = cls.name;
-            renderClassDetails();
-            renderStudentList();
-            updateDateTime();
-        };
-
-        const renderEmptyState = () => {
-            $('#class-title-header').textContent = "Nenhuma Turma";
-            $('#class-details').innerHTML = "Crie uma turma em 'Gerir Turmas'.";
-            $('#studentList').innerHTML = '';
-            $('#empty-state').classList.remove('hidden');
-            $('#empty-state').innerHTML = `<p>Por favor, selecione ou crie uma turma.</p>`;
-            $('#attendance-summary').innerHTML = '';
-        };
-
-        const renderClassDetails = () => {
-            const cls = getActiveClass();
-            if (!cls) return;
-            $('#class-details').innerHTML = `
-                <span>Professor(a): <span contenteditable="true" data-detail="teacher" class="p-1 rounded-md">${cls.details.teacher}</span></span>
-                <span>Sala: <span contenteditable="true" data-detail="room" class="p-1 rounded-md">${cls.details.room}</span></span>
-                <span>Turno: <span contenteditable="true" data-detail="shift" class="p-1 rounded-md">${cls.details.shift}</span></span>
-                <span>Bimestre: <span contenteditable="true" data-detail="bimester" class="p-1 rounded-md">${cls.details.bimester}</span></span>`;
-        };
-        
-        const renderStudentList = () => {
-            const cls = getActiveClass();
-            if (!cls) {
-                renderEmptyState();
-                return;
-            }
             
-            const date = $('#attendanceDate').value;
-            const dailyRecord = cls.history[date] || {};
-            const searchTerm = $('#searchStudent').value.toLowerCase();
+            const loadData = (userId) => {
+                // Para de ouvir o 'listener' anterior para evitar duplicações
+                if (unsubscribeFromFirestore) {
+                    unsubscribeFromFirestore();
+                }
 
-            const sortedStudents = [...cls.students].sort((a, b) => {
-                let valA = (sortState.key === 'name') ? a.name.toLowerCase() : (dailyRecord[a.id] || 'z');
-                let valB = (sortState.key === 'name') ? b.name.toLowerCase() : (dailyRecord[b.id] || 'z');
-                if (valA < valB) return sortState.asc ? -1 : 1;
-                if (valA > valB) return sortState.asc ? 1 : -1;
-                return a.name.localeCompare(b.name);
+                const docRef = doc(db, "artifacts", appId, "users", userId, "data", "attendancelist");
+                
+                unsubscribeFromFirestore = onSnapshot(docRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        console.log("Dados recebidos do Firestore.");
+                        data = docSnap.data();
+                        if (!data.classes) data.classes = []; // Garante que a propriedade classes existe
+                    } else {
+                        console.log("Nenhum documento encontrado, a criar um novo com dados padrão.");
+                        data = JSON.parse(JSON.stringify(defaultData));
+                        // Guarda imediatamente os dados padrão no Firestore
+                        setDoc(docRef, data);
+                    }
+                    initApp(); // Inicializa a UI com os dados carregados/criados
+                }, (error) => {
+                    console.error("Erro ao ouvir dados do Firestore:", error);
+                    $('#loading-screen').innerHTML = '<p>Não foi possível carregar os dados. Verifique a sua ligação e atualize.</p>';
+                });
+            };
+
+            const saveData = (immediate = false) => {
+                if (!auth.currentUser) {
+                    console.error("Tentativa de guardar dados sem utilizador autenticado.");
+                    showToast("Erro: Sem autenticação.", 'error');
+                    return;
+                }
+
+                clearTimeout(debounceTimeout);
+                const saveAction = async () => {
+                    try {
+                        data.activeClassId = activeClassId;
+                        const userId = auth.currentUser.uid;
+                        const docRef = doc(db, "artifacts", appId, "users", userId, "data", "attendancelist");
+                        await setDoc(docRef, data, { merge: true }); // Usar merge para evitar sobrescrever dados concorrentes
+                        showToast("Alterações guardadas na nuvem");
+                    } catch (e) {
+                        showToast("Erro ao guardar dados.", 'error');
+                        console.error("Erro ao guardar dados no Firestore:", e);
+                    }
+                };
+
+                if (immediate) {
+                    saveAction();
+                } else {
+                    debounceTimeout = setTimeout(saveAction, 1500); // Aumentado para escritas em rede
+                }
+            };
+
+            const getActiveClass = () => data.classes.find(c => c.id === activeClassId);
+
+            const createNewClass = (name) => ({
+                id: `class_${Date.now()}`,
+                name,
+                details: { teacher: "Professor(a)", room: "N/A", shift: "N/A", bimester: "N/A" },
+                students: [],
+                history: {}
             });
+            
+            // --- Lógica de renderização (maioria sem alterações) ---
 
-            const filteredStudents = sortedStudents.filter(student => student.name.toLowerCase().includes(searchTerm));
+            const renderAll = () => {
+                const cls = getActiveClass();
+                if (!cls) {
+                    renderEmptyState();
+                    return;
+                }
+                $('#class-title-header').textContent = cls.name;
+                renderClassDetails();
+                renderStudentList();
+                updateDateTime();
+            };
 
-            if (cls.students.length === 0) {
+            const renderEmptyState = () => {
+                $('#class-title-header').textContent = "Nenhuma Turma";
+                $('#class-details').innerHTML = "Crie uma turma em 'Gerir Turmas'.";
                 $('#studentList').innerHTML = '';
                 $('#empty-state').classList.remove('hidden');
-                $('#empty-search-state').classList.add('hidden');
-            } else if (filteredStudents.length === 0) {
-                $('#studentList').innerHTML = '';
-                $('#empty-state').classList.add('hidden');
-                $('#empty-search-state').classList.remove('hidden');
-            } else {
-                $('#empty-state').classList.add('hidden');
-                $('#empty-search-state').classList.add('hidden');
-                $('#studentList').innerHTML = filteredStudents.map((student, index) => {
-                    const status = dailyRecord[student.id] || '';
-                    return `
-                        <tr data-id="${student.id}">
-                            <td class="px-2 py-4 sm:p-4 text-sm text-gray-500">${index + 1}</td>
-                            <td class="px-2 py-4 sm:p-4 font-medium"><span contenteditable="true" class="edit-name p-1 rounded-md">${student.name}</span></td>
-                            <td class="px-2 py-4 sm:p-4 text-center"><span class="status-indicator font-semibold px-3 py-1 rounded-full text-sm">--</span></td>
-                            <td class="px-2 py-4 sm:p-4 text-center space-x-1">
-                                <button class="status-btn p-2 rounded-full hover:bg-green-200 dark:hover:bg-green-700 ${status === STATUS_PRESENT ? 'active-P' : ''}" data-status="${STATUS_PRESENT}" title="Presente">P</button>
-                                <button class="status-btn p-2 rounded-full hover:bg-red-200 dark:hover:bg-red-700 ${status === STATUS_ABSENT ? 'active-F' : ''}" data-status="${STATUS_ABSENT}" title="Falta">F</button>
-                                <button class="status-btn p-2 rounded-full hover:bg-yellow-200 dark:hover:bg-yellow-700 ${status === STATUS_JUSTIFIED ? 'active-J' : ''}" data-status="${STATUS_JUSTIFIED}" title="Justificado">J</button>
-                                <button class="delete-btn p-2 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-100 dark:hover:bg-gray-700" title="Apagar Aluno"><svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
-                            </td>
-                        </tr>`;
-                }).join('');
-            }
+                $('#empty-state').innerHTML = `<p>Por favor, selecione ou crie uma turma.</p>`;
+                $('#attendance-summary').innerHTML = '';
+            };
+
+            const renderClassDetails = () => {
+                const cls = getActiveClass();
+                if (!cls) return;
+                $('#class-details').innerHTML = `
+                    <span>Professor(a): <span contenteditable="true" data-detail="teacher" class="p-1 rounded-md">${cls.details.teacher}</span></span>
+                    <span>Sala: <span contenteditable="true" data-detail="room" class="p-1 rounded-md">${cls.details.room}</span></span>
+                    <span>Turno: <span contenteditable="true" data-detail="shift" class="p-1 rounded-md">${cls.details.shift}</span></span>
+                    <span>Bimestre: <span contenteditable="true" data-detail="bimester" class="p-1 rounded-md">${cls.details.bimester}</span></span>`;
+            };
             
-            $$('.sortable-header span').forEach(s => s.textContent = '');
-            $(`#sort-by-${sortState.key} span`).textContent = sortState.asc ? '▲' : '▼';
-
-            updateStatusIndicators();
-            updateAttendanceSummary();
-        };
-        
-        const updateStatusIndicators = () => {
-            const date = $('#attendanceDate').value;
-            const cls = getActiveClass();
-            if(!cls) return;
-            const dailyRecord = cls.history[date] || {};
-
-            $$('#studentList tr[data-id]').forEach(row => {
-                const status = dailyRecord[row.dataset.id] || '';
-                const indicator = row.querySelector('.status-indicator');
-                const statusInfo = {
-                    [STATUS_PRESENT]: { text: 'Presente', bg: 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300' },
-                    [STATUS_ABSENT]: { text: 'Falta', bg: 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300' },
-                    [STATUS_JUSTIFIED]: { text: 'Justificado', bg: 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300' },
-                    '': { text: '--', bg: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300' }
-                };
-                indicator.textContent = statusInfo[status].text;
-                indicator.className = `status-indicator font-semibold px-3 py-1 rounded-full text-sm ${statusInfo[status].bg}`;
-            });
-        };
-
-        const updateAttendanceSummary = () => {
-             const cls = getActiveClass();
-             if (!cls) return;
-             const total = cls.students.length;
-             if(total === 0) {
-                 $('#attendance-summary').innerHTML = '';
-                 return;
-             }
-             const date = $('#attendanceDate').value;
-             const dailyRecord = cls.history[date] || {};
-             const statuses = Object.values(dailyRecord);
-             const present = statuses.filter(s => s === STATUS_PRESENT).length;
-             const absent = statuses.filter(s => s === STATUS_ABSENT).length;
-             const just = statuses.filter(s => s === STATUS_JUSTIFIED).length;
-             $('#attendance-summary').innerHTML = `
-                <span class="bg-gray-200 dark:bg-gray-700/50 px-3 py-1 rounded-full">Total: <strong>${total}</strong></span>
-                <span class="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 px-3 py-1 rounded-full">Presentes: <strong>${present}</strong></span>
-                <span class="bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 px-3 py-1 rounded-full">Faltas: <strong>${absent}</strong></span>
-                <span class="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300 px-3 py-1 rounded-full">Justificadas: <strong>${just}</strong></span>`;
-        };
-        
-        const updateDateTime = () => {
-            $('#currentTime').textContent = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-            const dateForDisplay = new Date($('#attendanceDate').value);
-            $('#list-date-display').textContent = `Marcando presença para: ${dateForDisplay.toLocaleDateString('pt-BR', { timeZone: 'UTC' })}`;
-        };
-        
-        const updateClassSelector = () => {
-            const cls = getActiveClass();
-            $('#class-selector').innerHTML = data.classes.map(c => `<option value="${c.id}" ${c.id === activeClassId ? 'selected' : ''}>${c.name}</option>`).join('') 
-                || `<option>Nenhuma turma</option>`;
-            if (cls) {
-                $('#class-title-header').textContent = cls.name;
-                $('#class-selector').value = activeClassId;
-            }
-        };
-
-        const setupEventListeners = () => {
-            // --- GERAL ---
-            $('#login-form').addEventListener('submit', handleLogin);
-            $('#logout-btn').addEventListener('click', handleLogout);
-            $('#attendanceDate').addEventListener('change', renderAll);
-            $('#class-selector').addEventListener('change', (e) => { activeClassId = e.target.value; renderAll(); saveData(true); });
-            window.addEventListener('beforeunload', () => saveData(true));
-            document.addEventListener('keydown', (e) => e.key === "Escape" && closeAllModals());
-
-            // --- TÍTULO EDITÁVEL ---
-            const classTitleHeader = $('#class-title-header');
-            classTitleHeader.addEventListener('blur', handleTitleEdit);
-            classTitleHeader.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    classTitleHeader.blur();
+            const renderStudentList = () => {
+                const cls = getActiveClass();
+                if (!cls) {
+                    renderEmptyState();
+                    return;
                 }
-            });
+                
+                const date = $('#attendanceDate').value;
+                const dailyRecord = cls.history[date] || {};
+                const searchTerm = $('#searchStudent').value.toLowerCase();
 
-            // --- DELEGAÇÃO DE EVENTOS ---
-            $('main').addEventListener('input', (e) => {
-                 if(e.target.matches('[contenteditable][data-detail]')) {
-                    const cls = getActiveClass(); if(!cls) return;
-                    cls.details[e.target.dataset.detail] = e.target.textContent;
-                    saveData();
-                 } else if(e.target.matches('.edit-name')) {
-                    const student = getActiveClass().students.find(s => s.id === e.target.closest('tr').dataset.id);
-                    if(student) student.name = e.target.textContent;
-                    saveData();
-                 }
-            });
-            $('#studentList').addEventListener('click', handleStudentListClick);
-            
-            // --- AÇÕES ---
-            $('#addStudentBtn').addEventListener('click', handleAddStudent);
-            $('#studentName').addEventListener('keypress', (e) => e.key === 'Enter' && handleAddStudent(e));
-            $('#deleteAllStudentsBtn').addEventListener('click', handleDeleteAllStudents);
-            $('#markAllPresentBtn').addEventListener('click', () => updateAllStatuses(STATUS_PRESENT));
-            $('#markAbsenteesBtn').addEventListener('click', handleMarkAbsentees);
-            $('#clearAllBtn').addEventListener('click', () => updateAllStatuses(''));
-            $('#searchStudent').addEventListener('input', () => renderStudentList());
-            $('#sort-by-name').addEventListener('click', () => handleSort('name'));
-            $('#sort-by-status').addEventListener('click', () => handleSort('status'));
-            $('#exportPdfBtn').addEventListener('click', handleExportPdf);
-            $('#shareBtn').addEventListener('click', handleShare);
-            
-            // --- MODAIS ---
-            $('#settings-btn').addEventListener('click', () => openModal('#settingsModal'));
-            $('#reports-btn').addEventListener('click', openReportsModal);
-            $('#manage-classes-btn').addEventListener('click', openManageClassesModal);
-            $$('.modal-close-btn').forEach(btn => btn.addEventListener('click', () => closeAllModals()));
-            $$('.modal-backdrop').forEach(m => m.addEventListener('click', e => e.target === m && closeAllModals()));
-            $('#pasteListBtn').addEventListener('click', () => openModal('#pasteModal'));
-            $('#confirmPasteButton').addEventListener('click', handlePasteList);
-            $('#saveSettingsBtn').addEventListener('click', handleSaveSettings);
-            $('#exportDataBtn').addEventListener('click', handleExportData);
-            $('#importDataInput').addEventListener('change', handleImportData);
-            $('#addClassBtn').addEventListener('click', handleAddClass);
-            $('#manageClassesModal').addEventListener('click', handleManageClassesClick);
-            $('#saveForcedPasswordBtn').addEventListener('click', handleSaveForcedPassword);
-            
-            // --- UX ADICIONAL ---
-            $('main').addEventListener('paste', (e) => {
-                if (e.target.matches('[contenteditable="true"]')) {
-                    e.preventDefault();
-                    const text = e.clipboardData.getData('text/plain');
-                    document.execCommand('insertText', false, text);
-                }
-            });
-            $('#togglePassword').addEventListener('click', () => {
-                const isPassword = $('#password').type === 'password';
-                $('#password').type = isPassword ? 'text' : 'password';
-                $('#eye-open-icon').classList.toggle('hidden', isPassword);
-                $('#eye-closed-icon').classList.toggle('hidden', !isPassword);
-            });
-        };
+                const sortedStudents = [...cls.students].sort((a, b) => {
+                    let valA = (sortState.key === 'name') ? a.name.toLowerCase() : (dailyRecord[a.id] || 'z');
+                    let valB = (sortState.key === 'name') ? b.name.toLowerCase() : (dailyRecord[b.id] || 'z');
+                    if (valA < valB) return sortState.asc ? -1 : 1;
+                    if (valA > valB) return sortState.asc ? 1 : -1;
+                    return a.name.localeCompare(b.name);
+                });
 
-        const handleTitleEdit = (e) => {
-            const newName = e.target.textContent.trim();
-            const cls = getActiveClass();
-            if (newName && cls && cls.name !== newName) {
-                cls.name = newName;
-                updateClassSelector();
-                saveData(true);
-            } else if (cls) {
-                e.target.textContent = cls.name; // Reverte se o nome estiver vazio ou igual
-            }
-        };
+                const filteredStudents = sortedStudents.filter(student => student.name.toLowerCase().includes(searchTerm));
 
-        const handleLogin = (e) => {
-            e.preventDefault();
-            $('#login-error').textContent = '';
-            const passwordInput = $('#password').value;
-            if (passwordInput === data.password) {
-                if (data.password === DEFAULT_PASSWORD) {
-                    openModal('#forcePasswordChangeModal');
+                if (cls.students.length === 0) {
+                    $('#studentList').innerHTML = '';
+                    $('#empty-state').classList.remove('hidden');
+                    $('#empty-search-state').classList.add('hidden');
+                } else if (filteredStudents.length === 0) {
+                    $('#studentList').innerHTML = '';
+                    $('#empty-state').classList.add('hidden');
+                    $('#empty-search-state').classList.remove('hidden');
                 } else {
-                    sessionStorage.setItem(LOGGED_IN_KEY, 'true');
-                    checkLogin();
+                    $('#empty-state').classList.add('hidden');
+                    $('#empty-search-state').classList.add('hidden');
+                    $('#studentList').innerHTML = filteredStudents.map((student, index) => {
+                        const status = dailyRecord[student.id] || '';
+                        return `
+                            <tr data-id="${student.id}">
+                                <td class="px-2 py-4 sm:p-4 text-sm text-gray-500">${index + 1}</td>
+                                <td class="px-2 py-4 sm:p-4 font-medium"><span contenteditable="true" class="edit-name p-1 rounded-md">${student.name}</span></td>
+                                <td class="px-2 py-4 sm:p-4 text-center"><span class="status-indicator font-semibold px-3 py-1 rounded-full text-sm">--</span></td>
+                                <td class="px-2 py-4 sm:p-4 text-center space-x-1">
+                                    <button class="status-btn p-2 rounded-full hover:bg-green-200 dark:hover:bg-green-700 ${status === STATUS_PRESENT ? 'active-P' : ''}" data-status="${STATUS_PRESENT}" title="Presente">P</button>
+                                    <button class="status-btn p-2 rounded-full hover:bg-red-200 dark:hover:bg-red-700 ${status === STATUS_ABSENT ? 'active-F' : ''}" data-status="${STATUS_ABSENT}" title="Falta">F</button>
+                                    <button class="status-btn p-2 rounded-full hover:bg-yellow-200 dark:hover:bg-yellow-700 ${status === STATUS_JUSTIFIED ? 'active-J' : ''}" data-status="${STATUS_JUSTIFIED}" title="Justificado">J</button>
+                                    <button class="delete-btn p-2 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-100 dark:hover:bg-gray-700" title="Apagar Aluno"><svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                                </td>
+                            </tr>`;
+                    }).join('');
                 }
-            } else {
-                $('#login-error').textContent = 'Senha incorreta.';
-                $('#login-form').classList.add('animate-shake');
-                setTimeout(() => $('#login-form').classList.remove('animate-shake'), 500);
-            }
-        };
+                
+                $$('.sortable-header span').forEach(s => s.textContent = '');
+                $(`#sort-by-${sortState.key} span`).textContent = sortState.asc ? '▲' : '▼';
 
-        const handleLogout = () => {
-            showConfirmationModal('Sair da Aplicação', 'Tem a certeza de que deseja sair?', () => {
-                sessionStorage.removeItem(LOGGED_IN_KEY);
-                checkLogin();
-            });
-        };
-
-        const handleAddStudent = (e) => {
-            e.preventDefault();
-            const cls = getActiveClass(); if (!cls) return;
-            const name = $('#studentName').value.trim();
-            if (name) {
-                if (cls.students.some(s => s.name.toLowerCase() === name.toLowerCase())) {
-                    showToast("Este aluno já existe na turma.", 'error'); return;
-                }
-                cls.students.push({ id: `student_${Date.now()}`, name });
-                $('#studentName').value = '';
-                renderStudentList(); saveData(true);
-                showToast("Aluno adicionado.");
-            }
-        };
-
-        const handleStudentListClick = (e) => {
-            const btn = e.target.closest('button'); if (!btn) return;
-            const row = btn.closest('tr');
-            if (!row || !row.dataset.id) return;
-
-            const studentId = row.dataset.id;
-            const cls = getActiveClass(); if (!cls) return;
+                updateStatusIndicators();
+                updateAttendanceSummary();
+            };
             
-            if (btn.classList.contains('status-btn')) {
+            const updateStatusIndicators = () => {
+                const date = $('#attendanceDate').value;
+                const cls = getActiveClass();
+                if(!cls) return;
+                const dailyRecord = cls.history[date] || {};
+
+                $$('#studentList tr[data-id]').forEach(row => {
+                    const status = dailyRecord[row.dataset.id] || '';
+                    const indicator = row.querySelector('.status-indicator');
+                    const statusInfo = {
+                        [STATUS_PRESENT]: { text: 'Presente', bg: 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300' },
+                        [STATUS_ABSENT]: { text: 'Falta', bg: 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300' },
+                        [STATUS_JUSTIFIED]: { text: 'Justificado', bg: 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300' },
+                        '': { text: '--', bg: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300' }
+                    };
+                    indicator.textContent = statusInfo[status].text;
+                    indicator.className = `status-indicator font-semibold px-3 py-1 rounded-full text-sm ${statusInfo[status].bg}`;
+                });
+            };
+
+            const updateAttendanceSummary = () => {
+                const cls = getActiveClass();
+                if (!cls) return;
+                const total = cls.students.length;
+                if(total === 0) {
+                    $('#attendance-summary').innerHTML = '';
+                    return;
+                }
+                const date = $('#attendanceDate').value;
+                const dailyRecord = cls.history[date] || {};
+                const statuses = Object.values(dailyRecord);
+                const present = statuses.filter(s => s === STATUS_PRESENT).length;
+                const absent = statuses.filter(s => s === STATUS_ABSENT).length;
+                const just = statuses.filter(s => s === STATUS_JUSTIFIED).length;
+                $('#attendance-summary').innerHTML = `
+                    <span class="bg-gray-200 dark:bg-gray-700/50 px-3 py-1 rounded-full">Total: <strong>${total}</strong></span>
+                    <span class="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 px-3 py-1 rounded-full">Presentes: <strong>${present}</strong></span>
+                    <span class="bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 px-3 py-1 rounded-full">Faltas: <strong>${absent}</strong></span>
+                    <span class="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300 px-3 py-1 rounded-full">Justificadas: <strong>${just}</strong></span>`;
+            };
+            
+            const updateDateTime = () => {
+                $('#currentTime').textContent = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                const dateForDisplay = new Date($('#attendanceDate').value);
+                $('#list-date-display').textContent = `Marcando presença para: ${dateForDisplay.toLocaleDateString('pt-BR', { timeZone: 'UTC' })}`;
+            };
+            
+            const updateClassSelector = () => {
+                const cls = getActiveClass();
+                $('#class-selector').innerHTML = data.classes.map(c => `<option value="${c.id}" ${c.id === activeClassId ? 'selected' : ''}>${c.name}</option>`).join('') 
+                    || `<option>Nenhuma turma</option>`;
+                if (cls) {
+                    $('#class-title-header').textContent = cls.name;
+                    $('#class-selector').value = activeClassId;
+                }
+            };
+            
+            // --- EVENT LISTENERS (com pequenas adaptações para saveData) ---
+
+            const setupEventListeners = () => {
+                $('#login-form').addEventListener('submit', handleLogin);
+                $('#logout-btn').addEventListener('click', handleLogout);
+                $('#attendanceDate').addEventListener('change', renderAll);
+                $('#class-selector').addEventListener('change', (e) => { activeClassId = e.target.value; renderAll(); saveData(true); });
+                document.addEventListener('keydown', (e) => e.key === "Escape" && closeAllModals());
+
+                const classTitleHeader = $('#class-title-header');
+                classTitleHeader.addEventListener('blur', handleTitleEdit);
+                classTitleHeader.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        classTitleHeader.blur();
+                    }
+                });
+
+                $('main').addEventListener('input', (e) => {
+                    if(e.target.matches('[contenteditable][data-detail]')) {
+                        const cls = getActiveClass(); if(!cls) return;
+                        cls.details[e.target.dataset.detail] = e.target.textContent;
+                        saveData();
+                    } else if(e.target.matches('.edit-name')) {
+                        const student = getActiveClass().students.find(s => s.id === e.target.closest('tr').dataset.id);
+                        if(student) student.name = e.target.textContent;
+                        saveData();
+                    }
+                });
+                $('#studentList').addEventListener('click', handleStudentListClick);
+                
+                $('#addStudentBtn').addEventListener('click', handleAddStudent);
+                $('#studentName').addEventListener('keypress', (e) => e.key === 'Enter' && handleAddStudent(e));
+                $('#deleteAllStudentsBtn').addEventListener('click', handleDeleteAllStudents);
+                $('#markAllPresentBtn').addEventListener('click', () => updateAllStatuses(STATUS_PRESENT));
+                $('#markAbsenteesBtn').addEventListener('click', handleMarkAbsentees);
+                $('#clearAllBtn').addEventListener('click', () => updateAllStatuses(''));
+                $('#searchStudent').addEventListener('input', () => renderStudentList());
+                $('#sort-by-name').addEventListener('click', () => handleSort('name'));
+                $('#sort-by-status').addEventListener('click', () => handleSort('status'));
+                $('#exportPdfBtn').addEventListener('click', handleExportPdf);
+                $('#shareBtn').addEventListener('click', handleShare);
+                
+                $('#settings-btn').addEventListener('click', () => openModal('#settingsModal'));
+                $('#reports-btn').addEventListener('click', openReportsModal);
+                $('#manage-classes-btn').addEventListener('click', openManageClassesModal);
+                $$('.modal-close-btn').forEach(btn => btn.addEventListener('click', () => closeAllModals()));
+                $$('.modal-backdrop').forEach(m => m.addEventListener('click', e => e.target === m && closeAllModals()));
+                $('#pasteListBtn').addEventListener('click', () => openModal('#pasteModal'));
+                $('#confirmPasteButton').addEventListener('click', handlePasteList);
+                $('#saveSettingsBtn').addEventListener('click', handleSaveSettings);
+                $('#addClassBtn').addEventListener('click', handleAddClass);
+                $('#manageClassesModal').addEventListener('click', handleManageClassesClick);
+                $('#saveForcedPasswordBtn').addEventListener('click', handleSaveForcedPassword);
+                
+                $('main').addEventListener('paste', (e) => {
+                    if (e.target.matches('[contenteditable="true"]')) {
+                        e.preventDefault();
+                        const text = e.clipboardData.getData('text/plain');
+                        document.execCommand('insertText', false, text);
+                    }
+                });
+                $('#togglePassword').addEventListener('click', () => {
+                    const isPassword = $('#password').type === 'password';
+                    $('#password').type = isPassword ? 'text' : 'password';
+                    $('#eye-open-icon').classList.toggle('hidden', isPassword);
+                    $('#eye-closed-icon').classList.toggle('hidden', !isPassword);
+                });
+            };
+
+            const handleTitleEdit = (e) => {
+                const newName = e.target.textContent.trim();
+                const cls = getActiveClass();
+                if (newName && cls && cls.name !== newName) {
+                    cls.name = newName;
+                    updateClassSelector();
+                    saveData(true);
+                } else if (cls) {
+                    e.target.textContent = cls.name;
+                }
+            };
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                $('#login-error').textContent = '';
+                const passwordInput = $('#password').value;
+                if (passwordInput === data.password) {
+                    if (data.firstLogin && data.password === DEFAULT_PASSWORD) {
+                        openModal('#forcePasswordChangeModal');
+                    } else {
+                        sessionStorage.setItem(LOGGED_IN_KEY, 'true');
+                        initApp();
+                    }
+                } else {
+                    $('#login-error').textContent = 'Palavra-passe incorreta.';
+                    $('#login-form').classList.add('animate-shake');
+                    setTimeout(() => $('#login-form').classList.remove('animate-shake'), 500);
+                }
+            };
+
+            const handleLogout = () => {
+                showConfirmationModal('Sair da Aplicação', 'Tem a certeza de que deseja sair?', () => {
+                    sessionStorage.removeItem(LOGGED_IN_KEY);
+                    // Não fazemos signOut do Firebase anónimo para manter a sessão de dados
+                    $('main').classList.add('hidden');
+                    $('#login-screen').classList.remove('hidden');
+                });
+            };
+
+            const handleAddStudent = (e) => {
+                e.preventDefault();
+                const cls = getActiveClass(); if (!cls) return;
+                const name = $('#studentName').value.trim();
+                if (name) {
+                    if (cls.students.some(s => s.name.toLowerCase() === name.toLowerCase())) {
+                        showToast("Este aluno já existe na turma.", 'error'); return;
+                    }
+                    cls.students.push({ id: `student_${Date.now()}`, name });
+                    $('#studentName').value = '';
+                    renderStudentList(); saveData(true);
+                    showToast("Aluno adicionado.");
+                }
+            };
+
+            const handleStudentListClick = (e) => {
+                const btn = e.target.closest('button'); if (!btn) return;
+                const row = btn.closest('tr');
+                if (!row || !row.dataset.id) return;
+
+                const studentId = row.dataset.id;
+                const cls = getActiveClass(); if (!cls) return;
+                
+                if (btn.classList.contains('status-btn')) {
+                    const date = $('#attendanceDate').value;
+                    if (!cls.history[date]) cls.history[date] = {};
+                    const currentStatus = cls.history[date][studentId];
+                    const newStatus = btn.dataset.status;
+                    cls.history[date][studentId] = currentStatus === newStatus ? '' : newStatus;
+                    renderStudentList(); saveData(true);
+                } else if (btn.classList.contains('delete-btn')) {
+                    const studentIndex = cls.students.findIndex(s => s.id === studentId);
+                    if (studentIndex === -1) return;
+                    
+                    showConfirmationModal('Apagar Aluno', `Tem a certeza de que deseja apagar "${cls.students[studentIndex].name}"?`, () => {
+                        const studentIdToDelete = cls.students[studentIndex].id;
+                        cls.students.splice(studentIndex, 1);
+                        
+                        Object.keys(cls.history).forEach(dateKey => {
+                            delete cls.history[dateKey][studentIdToDelete];
+                        });
+                        
+                        renderStudentList(); saveData(true);
+                        showToast('Aluno removido!');
+                    });
+                }
+            };
+
+            const handleDeleteAllStudents = () => {
+                const cls = getActiveClass();
+                if (!cls || cls.students.length === 0) return showToast("Não há alunos para apagar.", 'info');
+                showConfirmationModal('Apagar Todos os Alunos', 'Tem a certeza de que deseja apagar TODOS os alunos e o seu histórico de presença desta turma?', () => {
+                    cls.students = [];
+                    cls.history = {};
+                    renderStudentList(); saveData(true);
+                    showToast('Todos os alunos foram apagados.');
+                });
+            };
+            
+            const updateAllStatuses = (status) => {
+                const cls = getActiveClass(); if (!cls) return;
                 const date = $('#attendanceDate').value;
                 if (!cls.history[date]) cls.history[date] = {};
-                const currentStatus = cls.history[date][studentId];
-                const newStatus = btn.dataset.status;
-                cls.history[date][studentId] = currentStatus === newStatus ? '' : newStatus;
+                cls.students.forEach(student => { cls.history[date][student.id] = status; });
                 renderStudentList(); saveData(true);
-            } else if (btn.classList.contains('delete-btn')) {
-                const studentIndex = cls.students.findIndex(s => s.id === studentId);
-                if (studentIndex === -1) return;
-                
-                 showConfirmationModal('Apagar Aluno', `Tem a certeza de que deseja apagar "${cls.students[studentIndex].name}"?`, () => {
-                    const studentIdToDelete = cls.students[studentIndex].id;
-                    cls.students.splice(studentIndex, 1);
-                    
-                    Object.keys(cls.history).forEach(dateKey => {
-                        delete cls.history[dateKey][studentIdToDelete];
-                    });
-                    
-                    renderStudentList(); saveData(true);
-                    showToast('Aluno removido!');
+            };
+
+            const handleMarkAbsentees = () => {
+                const cls = getActiveClass(); if (!cls) return;
+                const date = $('#attendanceDate').value;
+                if (!cls.history[date]) cls.history[date] = {};
+                let markedCount = 0;
+                cls.students.forEach(student => {
+                    if (!cls.history[date][student.id]) {
+                        cls.history[date][student.id] = STATUS_ABSENT;
+                        markedCount++;
+                    }
                 });
-            }
-        };
-
-        const handleDeleteAllStudents = () => {
-            const cls = getActiveClass();
-            if (!cls || cls.students.length === 0) return showToast("Não há alunos para apagar.", 'info');
-            showConfirmationModal('Apagar Todos os Alunos', 'Tem a certeza de que deseja apagar TODOS os alunos e seu histórico de presença desta turma?', () => {
-                cls.students = [];
-                cls.history = {};
-                renderStudentList(); saveData(true);
-                showToast('Todos os alunos foram apagados.');
-            });
-        };
-        
-        const updateAllStatuses = (status) => {
-            const cls = getActiveClass(); if (!cls) return;
-            const date = $('#attendanceDate').value;
-            if (!cls.history[date]) cls.history[date] = {};
-            cls.students.forEach(student => { cls.history[date][student.id] = status; });
-            renderStudentList(); saveData(true);
-        };
-
-        const handleMarkAbsentees = () => {
-             const cls = getActiveClass(); if (!cls) return;
-             const date = $('#attendanceDate').value;
-             if (!cls.history[date]) cls.history[date] = {};
-             let markedCount = 0;
-             cls.students.forEach(student => {
-                 if (!cls.history[date][student.id]) {
-                     cls.history[date][student.id] = STATUS_ABSENT;
-                     markedCount++;
-                 }
-             });
-             if (markedCount > 0) {
-                renderStudentList(); saveData(true);
-                showToast(`${markedCount} aluno(s) ausente(s) marcado(s) com falta.`);
-             } else {
-                showToast("Nenhum aluno ausente para marcar.", 'info');
-             }
-        };
-        
-        const handleSort = (key) => {
-            if (sortState.key === key) sortState.asc = !sortState.asc;
-            else { sortState.key = key; sortState.asc = true; }
-            renderStudentList();
-        };
-        
-        const handlePasteList = () => {
-            const cls = getActiveClass(); if (!cls) return;
-            const names = $('#pasteTextarea').value.trim().split('\n').map(name => name.trim()).filter(Boolean);
-            const existingNames = new Set(cls.students.map(s => s.name.toLowerCase()));
-            let addedCount = 0;
-            names.forEach(name => {
-                if(!existingNames.has(name.toLowerCase())) {
-                    cls.students.push({ id: `student_${Date.now()}_${Math.random()}`, name });
-                    addedCount++;
+                if (markedCount > 0) {
+                    renderStudentList(); saveData(true);
+                    showToast(`${markedCount} aluno(s) ausente(s) marcado(s) com falta.`);
+                } else {
+                    showToast("Nenhum aluno ausente para marcar.", 'info');
                 }
-            });
-            renderStudentList(); saveData(true);
-            closeAllModals();
-            showToast(`${addedCount} alunos adicionados.`);
-        };
-        
-        const handleSaveSettings = () => {
-            const btn = $('#saveSettingsBtn');
-            toggleButtonLoading(btn, true);
-            const newPassword = $('#newPassword').value;
-            if (newPassword) {
-                if (newPassword.length < 4) {
-                    showToast("A nova senha deve ter pelo menos 4 caracteres.", 'error');
+            };
+            
+            const handleSort = (key) => {
+                if (sortState.key === key) sortState.asc = !sortState.asc;
+                else { sortState.key = key; sortState.asc = true; }
+                renderStudentList();
+            };
+            
+            const handlePasteList = () => {
+                const cls = getActiveClass(); if (!cls) return;
+                const names = $('#pasteTextarea').value.trim().split('\n').map(name => name.trim()).filter(Boolean);
+                const existingNames = new Set(cls.students.map(s => s.name.toLowerCase()));
+                let addedCount = 0;
+                names.forEach(name => {
+                    if(!existingNames.has(name.toLowerCase())) {
+                        cls.students.push({ id: `student_${Date.now()}_${Math.random()}`, name });
+                        addedCount++;
+                    }
+                });
+                renderStudentList(); saveData(true);
+                closeAllModals();
+                showToast(`${addedCount} alunos adicionados.`);
+            };
+            
+            const handleSaveSettings = () => {
+                const btn = $('#saveSettingsBtn');
+                toggleButtonLoading(btn, true);
+                const newPassword = $('#newPassword').value;
+                if (newPassword) {
+                    if (newPassword.length < 4) {
+                        showToast("A nova palavra-passe deve ter pelo menos 4 caracteres.", 'error');
+                        toggleButtonLoading(btn, false);
+                        return;
+                    }
+                    data.password = newPassword;
+                    $('#newPassword').value = "";
+                    showToast("Palavra-passe alterada com sucesso!");
+                }
+                setTimeout(() => {
+                    saveData(true);
+                    closeAllModals();
                     toggleButtonLoading(btn, false);
+                }, 500);
+            };
+            
+            const handleSaveForcedPassword = () => {
+                const newPassword = $('#forceNewPassword').value;
+                if (newPassword.length < 4) {
+                    $('#force-password-error').textContent = "A palavra-passe deve ter pelo menos 4 caracteres.";
                     return;
                 }
                 data.password = newPassword;
-                $('#newPassword').value = "";
-                showToast("Senha alterada com sucesso!");
-            }
-            setTimeout(() => {
+                data.firstLogin = false;
                 saveData(true);
                 closeAllModals();
-                toggleButtonLoading(btn, false);
-            }, 500);
-        };
-        
-        const handleSaveForcedPassword = () => {
-            const newPassword = $('#forceNewPassword').value;
-            if (newPassword.length < 4) {
-                $('#force-password-error').textContent = "A senha deve ter pelo menos 4 caracteres.";
-                return;
-            }
-            data.password = newPassword;
-            data.firstLogin = false;
-            saveData(true);
-            closeAllModals();
-            sessionStorage.setItem(LOGGED_IN_KEY, 'true');
-            checkLogin();
-        };
-
-        const handleExportData = () => {
-            const dataStr = JSON.stringify(data, null, 2);
-            const blob = new Blob([dataStr], {type: "application/json"});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `backup_lista_presenca_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast("Backup exportado!");
-        };
-
-        const handleImportData = (event) => {
-            const file = event.target.files[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const importedData = JSON.parse(e.target.result);
-                    if (importedData.classes && importedData.password) {
-                        showConfirmationModal("Importar Backup", "Isto substituirá todos os dados atuais. Deseja continuar?", () => {
-                            data = importedData;
-                            activeClassId = data.activeClassId || data.classes[0]?.id;
-                            saveData(true);
-                            showToast("Dados importados! A página será recarregada.");
-                            setTimeout(() => location.reload(), 1500);
-                        });
-                    } else { showToast("Ficheiro de backup inválido.", 'error'); }
-                } catch (error) { showToast("Erro ao ler o ficheiro de backup.", 'error'); }
+                sessionStorage.setItem(LOGGED_IN_KEY, 'true');
+                initApp();
             };
-            reader.readAsText(file);
-        };
-        
-        const handleAddClass = () => {
-            const name = $('#newClassName').value.trim();
-            if (name) {
-                const newClass = createNewClass(name);
-                data.classes.push(newClass);
-                activeClassId = newClass.id;
-                $('#newClassName').value = '';
-                renderManageClassesList();
-                updateClassSelector();
-                renderAll();
-                saveData(true);
-            }
-        };
 
-        const handleManageClassesClick = (e) => {
-            const btn = e.target.closest('button'); if (!btn) return;
-            const classItem = btn.closest('[data-id]');
-            const classId = classItem.dataset.id;
-            const classIndex = data.classes.findIndex(c => c.id === classId);
+            const handleExportPdf = () => {
+                const cls = getActiveClass(); if (!cls) return;
+                const date = $('#attendanceDate').value;
+                const dailyRecord = cls.history[date] || {};
 
-            if (btn.classList.contains('delete-class-btn')) {
-                if (data.classes.length === 1) {
-                    showToast("Não pode apagar a única turma existente.", 'info'); return;
+                const studentRows = cls.students.sort((a,b) => a.name.localeCompare(b.name)).map((student, index) => `
+                    <tr style="border-top: 1px solid #e2e8f0;">
+                        <td style="padding: 8px;">${index + 1}</td>
+                        <td style="padding: 8px; font-weight: 500;">${student.name}</td>
+                        <td style="padding: 8px; text-align: center;">${dailyRecord[student.id] || '--'}</td>
+                    </tr>`).join('');
+
+                const content = `
+                    <div style="font-family: 'Inter', sans-serif; padding: 20px; color: #000; font-size: 12px;">
+                        <h1 style="font-size: 20px; font-weight: bold; margin-bottom: 15px;">Lista de Presença</h1>
+                        <div style="margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px;">
+                            <p><strong>Turma:</strong> ${cls.name}</p>
+                            <p><strong>Professor(a):</strong> ${cls.details.teacher}</p>
+                            <p><strong>Data:</strong> ${new Date(date).toLocaleDateString('pt-BR',{timeZone:'UTC'})}</p>
+                        </div>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead style="background-color: #f7fafc;">
+                                <tr><th style="padding: 8px; text-align: left;">ID</th><th style="padding: 8px; text-align: left;">Nome</th><th style="padding: 8px; text-align: center;">Status</th></tr>
+                            </thead>
+                            <tbody>${studentRows}</tbody>
+                        </table>
+                    </div>`;
+                
+                html2pdf().set({
+                    filename: `ListaDePresenca_${cls.name.replace(/ /g, '_')}_${date}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                }).from(content).save();
+            };
+
+            const handleShare = async () => {
+                const cls = getActiveClass(); if (!cls) return;
+                const date = $('#attendanceDate').value;
+                const dailyRecord = cls.history[date] || {};
+                const studentNames = cls.students.map((s, i) => `${i + 1}. ${s.name} (${dailyRecord[s.id] || 'Não marcado'})`).join('\n');
+                const textToShare = `Lista de Presença - ${cls.name}\nData: ${new Date(date).toLocaleDateString('pt-BR',{timeZone:'UTC'})}\n\n${studentNames}`;
+                if (navigator.share) {
+                    try {
+                        await navigator.share({ title: 'Lista de Presença', text: textToShare });
+                    } catch (error) { showToast('Partilha cancelada.', 'info'); }
+                } else {
+                    showToast('Partilha não suportada.', 'info');
                 }
-                showConfirmationModal("Apagar Turma", "Tem a certeza? Todos os alunos e o histórico de presenças desta turma serão apagados permanentemente.", () => {
-                    data.classes.splice(classIndex, 1);
-                    if (activeClassId === classId) {
-                        activeClassId = data.classes[0]?.id || null;
-                    }
+            };
+            
+            const showConfirmationModal = (title, message, onConfirm) => {
+                $('#modalTitle').textContent = title;
+                $('#modalMessage').textContent = message;
+                const confirmBtn = $('#confirmButton');
+                
+                const controller = new AbortController();
+                confirmBtn.addEventListener('click', () => {
+                    onConfirm();
+                    closeAllModals();
+                    controller.abort();
+                }, { signal: controller.signal });
+                openModal('#confirmationModal');
+            };
+
+            const openModal = (selector) => $(selector).classList.add('active');
+            const closeAllModals = () => $$('.modal-backdrop').forEach(m => m.classList.remove('active'));
+
+            const openManageClassesModal = () => {
+                renderManageClassesList();
+                openModal('#manageClassesModal');
+            };
+
+            const handleAddClass = () => {
+                const name = $('#newClassName').value.trim();
+                if (name) {
+                    const newClass = createNewClass(name);
+                    data.classes.push(newClass);
+                    activeClassId = newClass.id;
+                    $('#newClassName').value = '';
                     renderManageClassesList();
                     updateClassSelector();
                     renderAll();
                     saveData(true);
-                });
-            } else if (btn.classList.contains('edit-class-btn')) {
-                const nameSpan = classItem.querySelector('.class-name-span');
-                const isEditing = nameSpan.isContentEditable;
-
-                if(isEditing) {
-                    nameSpan.contentEditable = false;
-                    nameSpan.blur();
-                    btn.innerHTML = '✏️';
-                    const newName = nameSpan.textContent.trim();
-                    if(newName) data.classes[classIndex].name = newName;
-                    updateClassSelector();
-                    saveData(true);
-                } else {
-                    nameSpan.contentEditable = true;
-                    nameSpan.focus();
-                    document.execCommand('selectAll', false, null);
-                    btn.innerHTML = '💾';
                 }
-            }
-        };
-        
-        const handleExportPdf = () => {
-            const cls = getActiveClass(); if (!cls) return;
-            const date = $('#attendanceDate').value;
-            const dailyRecord = cls.history[date] || {};
+            };
 
-            const studentRows = cls.students.sort((a,b) => a.name.localeCompare(b.name)).map((student, index) => `
-                <tr style="border-top: 1px solid #e2e8f0;">
-                    <td style="padding: 8px;">${index + 1}</td>
-                    <td style="padding: 8px; font-weight: 500;">${student.name}</td>
-                    <td style="padding: 8px; text-align: center;">${dailyRecord[student.id] || '--'}</td>
-                </tr>`).join('');
+            const handleManageClassesClick = (e) => {
+                const btn = e.target.closest('button'); if (!btn) return;
+                const classItem = btn.closest('[data-id]');
+                const classId = classItem.dataset.id;
+                const classIndex = data.classes.findIndex(c => c.id === classId);
 
-            const content = `
-                <div style="font-family: 'Inter', sans-serif; padding: 20px; color: #000; font-size: 12px;">
-                    <h1 style="font-size: 20px; font-weight: bold; margin-bottom: 15px;">Lista de Presença</h1>
-                     <div style="margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px;">
-                        <p><strong>Turma:</strong> ${cls.name}</p>
-                        <p><strong>Professor(a):</strong> ${cls.details.teacher}</p>
-                        <p><strong>Data:</strong> ${new Date(date).toLocaleDateString('pt-BR',{timeZone:'UTC'})}</p>
-                     </div>
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead style="background-color: #f7fafc;">
-                            <tr><th style="padding: 8px; text-align: left;">ID</th><th style="padding: 8px; text-align: left;">Nome</th><th style="padding: 8px; text-align: center;">Status</th></tr>
-                        </thead>
-                        <tbody>${studentRows}</tbody>
-                    </table>
-                </div>`;
-            
-            html2pdf().set({
-                filename: `ListaDePresenca_${cls.name.replace(/ /g, '_')}_${date}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            }).from(content).save();
-        };
-
-        const handleShare = async () => {
-            const cls = getActiveClass(); if (!cls) return;
-            const date = $('#attendanceDate').value;
-            const dailyRecord = cls.history[date] || {};
-            const studentNames = cls.students.map((s, i) => `${i + 1}. ${s.name} (${dailyRecord[s.id] || 'Não marcado'})`).join('\n');
-            const textToShare = `Lista de Presença - ${cls.name}\nData: ${new Date(date).toLocaleDateString('pt-BR',{timeZone:'UTC'})}\n\n${studentNames}`;
-            if (navigator.share) {
-                try {
-                    await navigator.share({ title: 'Lista de Presença', text: textToShare });
-                } catch (error) { showToast('Partilha cancelada.', 'info'); }
-            } else {
-                showToast('Partilha não suportada.', 'info');
-            }
-        };
-        
-        const showConfirmationModal = (title, message, onConfirm) => {
-            $('#modalTitle').textContent = title;
-            $('#modalMessage').textContent = message;
-            const confirmBtn = $('#confirmButton');
-            
-            const controller = new AbortController();
-            confirmBtn.addEventListener('click', () => {
-                onConfirm();
-                closeAllModals();
-                controller.abort();
-            }, { signal: controller.signal });
-            openModal('#confirmationModal');
-        };
-
-        const openModal = (selector) => $(selector).classList.add('active');
-        const closeAllModals = () => $$('.modal-backdrop').forEach(m => m.classList.remove('active'));
-
-        const openManageClassesModal = () => {
-            renderManageClassesList();
-            openModal('#manageClassesModal');
-        };
-
-        const renderManageClassesList = () => {
-            $('#classList').innerHTML = data.classes.map(c => `
-                <div data-id="${c.id}" class="flex items-center justify-between p-2 border rounded-md dark:border-gray-600">
-                    <span class="class-name-span truncate pr-2 p-1 rounded-md">${c.name}</span>
-                    <div class="flex-shrink-0">
-                        <button class="edit-class-btn p-1 text-blue-500 hover:text-blue-700" title="Editar nome">✏️</button>
-                        <button class="delete-class-btn p-1 text-red-500 hover:text-red-700" title="Apagar turma">🗑️</button>
-                    </div>
-                </div>`).join('');
-        };
-        
-        const openReportsModal = () => {
-            const cls = getActiveClass();
-            if (!cls || cls.students.length === 0) {
-                showToast("Não há alunos na turma para gerar relatório.", 'info'); return;
-            }
-            
-            const stats = {};
-            cls.students.forEach(s => stats[s.id] = { P: 0, F: 0, J: 0, total: 0 });
-
-            Object.values(cls.history).forEach(dailyRecord => {
-                Object.entries(dailyRecord).forEach(([studentId, status]) => {
-                    if (stats[studentId] && status) {
-                        if (stats[studentId][status] !== undefined) {
-                           stats[studentId][status]++;
+                if (btn.classList.contains('delete-class-btn')) {
+                    if (data.classes.length === 1) {
+                        showToast("Não pode apagar a única turma existente.", 'info'); return;
+                    }
+                    showConfirmationModal("Apagar Turma", "Tem a certeza? Todos os alunos e o histórico de presenças desta turma serão apagados permanentemente.", () => {
+                        data.classes.splice(classIndex, 1);
+                        if (activeClassId === classId) {
+                            activeClassId = data.classes[0]?.id || null;
                         }
-                        if (status === STATUS_PRESENT || status === STATUS_ABSENT) {
-                           stats[studentId].total++;
+                        renderManageClassesList();
+                        updateClassSelector();
+                        renderAll();
+                        saveData(true);
+                    });
+                } else if (btn.classList.contains('edit-class-btn')) {
+                    const nameSpan = classItem.querySelector('.class-name-span');
+                    const isEditing = nameSpan.isContentEditable;
+
+                    if(isEditing) {
+                        nameSpan.contentEditable = false;
+                        nameSpan.blur();
+                        btn.innerHTML = '✏️';
+                        const newName = nameSpan.textContent.trim();
+                        if(newName) data.classes[classIndex].name = newName;
+                        updateClassSelector();
+                        saveData(true);
+                    } else {
+                        nameSpan.contentEditable = true;
+                        nameSpan.focus();
+                        document.execCommand('selectAll', false, null);
+                        btn.innerHTML = '💾';
+                    }
+                }
+            };
+
+            const renderManageClassesList = () => {
+                $('#classList').innerHTML = data.classes.map(c => `
+                    <div data-id="${c.id}" class="flex items-center justify-between p-2 border rounded-md dark:border-gray-600">
+                        <span class="class-name-span truncate pr-2 p-1 rounded-md">${c.name}</span>
+                        <div class="flex-shrink-0">
+                            <button class="edit-class-btn p-1 text-blue-500 hover:text-blue-700" title="Editar nome">✏️</button>
+                            <button class="delete-class-btn p-1 text-red-500 hover:text-red-700" title="Apagar turma">🗑️</button>
+                        </div>
+                    </div>`).join('');
+            };
+            
+            const openReportsModal = () => {
+                const cls = getActiveClass();
+                if (!cls || cls.students.length === 0) {
+                    showToast("Não há alunos na turma para gerar relatório.", 'info'); return;
+                }
+                
+                const stats = {};
+                cls.students.forEach(s => stats[s.id] = { P: 0, F: 0, J: 0, total: 0 });
+
+                Object.values(cls.history).forEach(dailyRecord => {
+                    Object.entries(dailyRecord).forEach(([studentId, status]) => {
+                        if (stats[studentId] && status) {
+                            if (stats[studentId][status] !== undefined) {
+                            stats[studentId][status]++;
+                            }
+                            if (status === STATUS_PRESENT || status === STATUS_ABSENT) {
+                            stats[studentId].total++;
+                            }
                         }
+                    });
+                });
+
+                $('#reports-content').innerHTML = `
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-gray-50 dark:bg-gray-700/50"><tr>
+                            <th class="px-2 py-3 sm:p-2">Aluno</th><th class="px-2 py-3 sm:p-2 text-center">Presente</th><th class="px-2 py-3 sm:p-2 text-center">Falta</th>
+                            <th class="px-2 py-3 sm:p-2 text-center">Justificado</th><th class="px-2 py-3 sm:p-2 text-center">Aproveitamento</th><th class="px-2 py-3 sm:p-2 text-center">Ações</th>
+                        </tr></thead>
+                        <tbody>
+                        ${cls.students.sort((a,b)=>a.name.localeCompare(b.name)).map(s => {
+                            const s_stats = stats[s.id];
+                            const attendanceRate = s_stats.total > 0 ? ((s_stats.P / s_stats.total) * 100).toFixed(0) : "N/A";
+                            return `<tr class="border-b dark:border-gray-700">
+                                <td class="px-2 py-3 sm:p-2 font-medium">${s.name}</td><td class="px-2 py-3 sm:p-2 text-center">${s_stats.P}</td>
+                                <td class="px-2 py-3 sm:p-2 text-center">${s_stats.F}</td><td class="px-2 py-3 sm:p-2 text-center">${s_stats.J}</td>
+                                <td class="px-2 py-3 sm:p-2 text-center">${attendanceRate === "N/A" ? "N/A" : attendanceRate + "%"}</td>
+                                <td class="px-2 py-3 sm:p-2 text-center"><button data-id="${s.id}" class="export-student-report-btn text-blue-500 hover:underline">Exportar PDF</button></td>
+                            </tr>`
+                        }).join('')}
+                        </tbody>
+                    </table>`;
+                
+                $$('.export-student-report-btn').forEach(btn => btn.addEventListener('click', handleExportStudentReport));
+                openModal('#reportsModal');
+            };
+            
+            const handleExportStudentReport = (e) => {
+                const studentId = e.target.dataset.id;
+                const cls = getActiveClass();
+                const student = cls.students.find(s => s.id === studentId); if (!student) return;
+
+                let reportHtml = `<div style="font-family: 'Inter', sans-serif; padding: 20px; color: #000; font-size: 12px;"><h2 style="font-size: 18px; font-weight: bold;">Relatório de Assiduidade</h2>
+                <p><strong>Aluno:</strong> ${student.name}</p><p><strong>Turma:</strong> ${cls.name}</p><br>
+                <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                    <thead><tr><th style="padding: 5px; border-bottom: 1px solid #000; text-align: left;">Data</th><th style="padding: 5px; border-bottom: 1px solid #000; text-align: left;">Status</th></tr></thead><tbody>`;
+
+                Object.entries(cls.history).sort().forEach(([date, dailyRecord]) => {
+                    if(dailyRecord[studentId]) {
+                        const statusText = { 'P': 'Presente', 'F': 'Falta', 'J': 'Justificado' }[dailyRecord[studentId]] || dailyRecord[studentId];
+                        reportHtml += `<tr><td style="padding: 5px; border-bottom: 1px solid #ccc;">${new Date(date).toLocaleDateString('pt-BR', {timeZone:'UTC'})}</td><td style="padding: 5px; border-bottom: 1px solid #ccc;">${statusText}</td></tr>`;
                     }
                 });
-            });
-
-            $('#reports-content').innerHTML = `
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-gray-50 dark:bg-gray-700/50"><tr>
-                        <th class="px-2 py-3 sm:p-2">Aluno</th><th class="px-2 py-3 sm:p-2 text-center">Presente</th><th class="px-2 py-3 sm:p-2 text-center">Falta</th>
-                        <th class="px-2 py-3 sm:p-2 text-center">Justificado</th><th class="px-2 py-3 sm:p-2 text-center">Aproveitamento</th><th class="px-2 py-3 sm:p-2 text-center">Ações</th>
-                    </tr></thead>
-                    <tbody>
-                    ${cls.students.sort((a,b)=>a.name.localeCompare(b.name)).map(s => {
-                        const s_stats = stats[s.id];
-                        const attendanceRate = s_stats.total > 0 ? ((s_stats.P / s_stats.total) * 100).toFixed(0) : "N/A";
-                        return `<tr class="border-b dark:border-gray-700">
-                            <td class="px-2 py-3 sm:p-2 font-medium">${s.name}</td><td class="px-2 py-3 sm:p-2 text-center">${s_stats.P}</td>
-                            <td class="px-2 py-3 sm:p-2 text-center">${s_stats.F}</td><td class="px-2 py-3 sm:p-2 text-center">${s_stats.J}</td>
-                            <td class="px-2 py-3 sm:p-2 text-center">${attendanceRate === "N/A" ? "N/A" : attendanceRate + "%"}</td>
-                            <td class="px-2 py-3 sm:p-2 text-center"><button data-id="${s.id}" class="export-student-report-btn text-blue-500 hover:underline">Exportar PDF</button></td>
-                        </tr>`
-                    }).join('')}
-                    </tbody>
-                </table>`;
+                reportHtml += `</tbody></table></div>`;
+                
+                html2pdf().from(reportHtml).set({ filename: `Relatorio_${student.name.replace(/ /g, '_')}.pdf`, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } }).save();
+            };
             
-            $$('.export-student-report-btn').forEach(btn => btn.addEventListener('click', handleExportStudentReport));
-            openModal('#reportsModal');
-        };
-        
-        const handleExportStudentReport = (e) => {
-            const studentId = e.target.dataset.id;
-            const cls = getActiveClass();
-            const student = cls.students.find(s => s.id === studentId); if (!student) return;
+            const showToast = (message, type = 'success') => {
+                const toast = $('#toast');
+                toast.textContent = message;
+                toast.className = `toast fixed bottom-5 left-1/2 -translate-x-1/2 text-white py-2 px-5 rounded-full shadow-lg z-[70]`;
+                if (type === 'error') toast.classList.add('bg-red-600');
+                else if (type === 'info') toast.classList.add('bg-blue-600');
+                else toast.classList.add('bg-gray-800');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            };
 
-            let reportHtml = `<div style="font-family: 'Inter', sans-serif; padding: 20px; color: #000; font-size: 12px;"><h2 style="font-size: 18px; font-weight: bold;">Relatório de Assiduidade</h2>
-            <p><strong>Aluno:</strong> ${student.name}</p><p><strong>Turma:</strong> ${cls.name}</p><br>
-            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-                <thead><tr><th style="padding: 5px; border-bottom: 1px solid #000; text-align: left;">Data</th><th style="padding: 5px; border-bottom: 1px solid #000; text-align: left;">Status</th></tr></thead><tbody>`;
-
-            Object.entries(cls.history).sort().forEach(([date, dailyRecord]) => {
-                if(dailyRecord[studentId]) {
-                    const statusText = { 'P': 'Presente', 'F': 'Falta', 'J': 'Justificado' }[dailyRecord[studentId]] || dailyRecord[studentId];
-                    reportHtml += `<tr><td style="padding: 5px; border-bottom: 1px solid #ccc;">${new Date(date).toLocaleDateString('pt-BR', {timeZone:'UTC'})}</td><td style="padding: 5px; border-bottom: 1px solid #ccc;">${statusText}</td></tr>`;
+            const toggleButtonLoading = (button, isLoading) => {
+                if(isLoading) {
+                    button.disabled = true;
+                    button.dataset.originalText = button.innerHTML;
+                    button.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Aguarde...`;
+                } else {
+                    button.disabled = false;
+                    button.innerHTML = button.dataset.originalText;
                 }
-            });
-            reportHtml += `</tbody></table></div>`;
+            };
+
+            const initTheme = () => {
+                const preferredTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                const isDark = preferredTheme === 'dark';
+                document.documentElement.classList.toggle('dark', isDark);
+                updateThemeIcons(isDark);
+                $('#theme-toggle').addEventListener('click', () => {
+                    const isDarkNow = document.documentElement.classList.toggle('dark');
+                    localStorage.setItem('theme', isDarkNow ? 'dark' : 'light');
+                    updateThemeIcons(isDarkNow);
+                });
+            };
+            const updateThemeIcons = (isDark) => {
+                $('#theme-toggle-dark-icon').classList.toggle('hidden', isDark);
+                $('#theme-toggle-light-icon').classList.toggle('hidden', !isDark);
+            };
             
-            html2pdf().from(reportHtml).set({ filename: `Relatorio_${student.name.replace(/ /g, '_')}.pdf`, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } }).save();
-        };
-        
-        const showToast = (message, type = 'success') => {
-            const toast = $('#toast');
-            toast.textContent = message;
-            toast.className = `toast fixed bottom-5 left-1/2 -translate-x-1/2 text-white py-2 px-5 rounded-full shadow-lg z-[70]`;
-            if (type === 'error') toast.classList.add('bg-red-600');
-            else if (type === 'info') toast.classList.add('bg-blue-600');
-            else toast.classList.add('bg-gray-800');
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        };
-
-        const toggleButtonLoading = (button, isLoading) => {
-            if(isLoading) {
-                button.disabled = true;
-                button.dataset.originalText = button.innerHTML;
-                button.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Aguarde...`;
-            } else {
-                button.disabled = false;
-                button.innerHTML = button.dataset.originalText;
-            }
-        };
-
-        const initTheme = () => {
-            const preferredTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            const isDark = preferredTheme === 'dark';
-            document.documentElement.classList.toggle('dark', isDark);
-            updateThemeIcons(isDark);
-            $('#theme-toggle').addEventListener('click', () => {
-                const isDarkNow = document.documentElement.classList.toggle('dark');
-                localStorage.setItem('theme', isDarkNow ? 'dark' : 'light');
-                updateThemeIcons(isDarkNow);
-            });
-        };
-        const updateThemeIcons = (isDark) => {
-            $('#theme-toggle-dark-icon').classList.toggle('hidden', isDark);
-            $('#theme-toggle-light-icon').classList.toggle('hidden', !isDark);
-        };
-        
-        init();
-    });
+            init();
+        });
     </script>
 </body>
 </html>
