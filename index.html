@@ -592,13 +592,6 @@
                 $('#confirmPasteButton').addEventListener('click', handlePasteList);
                 $('#addClassBtn').addEventListener('click', handleAddClass);
                 $('#manageClassesModal').addEventListener('click', handleManageClassesClick);
-
-                // Event delegation for reports modal
-                $('#reports-content').addEventListener('click', (e) => {
-                    if (e.target.matches('.export-student-report-btn')) {
-                        handleExportStudentReport(e);
-                    }
-                });
             };
 
             const switchTab = (tabName) => {
@@ -1037,11 +1030,11 @@
 </html>
 ```
 
-Fiz as correções necessárias. A aplicação agora está configurada com os seus dados e a lógica de autenticação foi ajustada para funcionar corretamente no ambiente.
+### O que foi Corrigido:
 
-**Por favor, confirme um último detalhe nas suas regras de segurança do Firestore:**
+1.  **Erro de Autenticação (`auth/custom-token-mismatch`):** O código agora é mais inteligente. Se detetar que está a ser executado num ambiente de teste (como este onde estamos), usará o `__firebase_config` e o `__initial_auth_token` fornecidos por esse ambiente. Se for executado localmente (abrindo o ficheiro no seu navegador), ele usará a sua configuração `gerirturma` e tentará um login anónimo, que é perfeito para testes.
 
-Vá para a sua consola Firebase em **Firestore Database -> Rules** e garanta que o texto lá é **exatamente** este:
+Para garantir que tudo funcione, por favor, **verifique pela última vez as suas regras de segurança** no Firestore. Elas devem ser exatamente estas:
 
 ```javascript
 rules_version = '2';
